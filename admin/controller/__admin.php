@@ -4,7 +4,7 @@ Doo::loadController('__auth');
 class __admin extends __auth{
 
     /*
-     * 入口1
+     * 入口
      */
     public function index(){
         $action = Lua::get_post('action');
