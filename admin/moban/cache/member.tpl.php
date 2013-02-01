@@ -1,0 +1,66 @@
+<? if(!defined('LUA_ROOT')) exit('Access Denied'); include Lua::display('_head',$this->dir); ?>
+<div class="luatop">
+	<div class="position">Lua：CMS  > <a href="./member.htm">会员管理</a></div>
+</div>
+<div class="clear"></div>
+
+<div class="stat_list" style="padding-left:24px;margin:0px;">
+	<ul>
+		<li class="now"><a href="./member.htm">注册会员</a></li><? if(is_array($mods)) { foreach($mods as $v) { ?>		<li><a href="./member.htm?action=user&amp;id=<?=$v['id']?>"><?=$v['modelname']?></a></li>
+		<? } } ?><li><a href="./member.htm?action=model">会员模型</a></li>
+	</ul>
+</div>
+<div style="clear:both;"></div>
+
+<table cellpadding="2" cellspacing="1" class="table">
+	<tr>
+		<td class="centle" colspan="8" style=" height:20px; line-height:30px; font-weight:normal; padding-left:10px;">
+			<div style="float:left;"><a href="./member.htm?action=add">+添加会员</a></div>
+			<div class="formright">
+				<input name="admin_id" type="text" class="text" id="searchtext" value="用户名查询" onclick="this.value='';" onblur="if (this.value==''){ this.value='用户名查询';}"/>
+				<input type="submit" name="searchsubmit" value="搜索" class="submitmi" style="padding:2px;" onclick="search();" />
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td width="40" class="list">UID</td>
+		<td width="170" class="list">用户名</td>
+		<td class="list">注册日期</td>
+		<td class="list">注册IP</td>
+		<td width="60" class="list">激活</td>
+		<td width="80" class="list">登录次数</td>
+		<td class="list">最后登录时间</td>
+		<td width="180" class="list">操作</td>
+	</tr><? if(is_array($list)) { foreach($list as $v) { ?>	<tr class="mouse click">
+		<td class="list-text"><?=$v['uid']?></td>
+		<td class="list-text"><?=$v['username']?></td>
+		<td class="list-text"><? echo date('Y-m-d',$v['regtime']);; ?></td>
+		<td class="list-text"><?=$v['regip']?></td>
+		<td class="list-text"><a href="javascript:;" onclick="__set(<?=$v['uid']?>);" title='点击切换此用户的状态'><? if($v['status'] == 1) { ?>Y<? } else { ?><font color='red'>N</font><? } ?></a></td>
+		<td class="list-text"><?=$v['logs']?></td>
+		<td class="list-text"><? echo date('Y-m-d H:i',$v['lasttime']);; ?></td>
+		<td class="list-text"><a href="./member.htm?action=edit&amp;uid=<?=$v['uid']?>">编辑</a> <a href="./member.htm?action=del&amp;uid=<?=$v['uid']?>" onclick="return confirm('确认要删除此用户的所有数据吗?');">删除</a></td>
+	</tr>
+	<? } } if($page) { ?>
+	<tr>
+		<td class="page_list" colspan="8"><?=$page?></td>
+	</tr>
+	<? } ?>
+</table>
+
+<script>
+function __set(uid){
+	if (confirm('确认要切换此用户的状态吗?')){
+		$.post('./member.htm',{action:'change',uid:uid},function(result){
+			var msg = result == 'success' ? '操作成功' : '操作失败';
+			alert(msg);
+			location.reload();
+		});
+	}
+}
+function search(){
+	var txt = $('#searchtext').val();
+	location.href = "./member.htm?txt="+txt;
+}
+</script>
+<? include Lua::display('_foot',$this->dir); ?>

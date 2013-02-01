@@ -1,0 +1,2 @@
+<?php
+$acl["admin"]["allow"] = "*";

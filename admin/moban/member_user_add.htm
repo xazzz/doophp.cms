@@ -1,0 +1,62 @@
+<!--{template _head.@this->dir}-->
+
+<div class="luatop">
+	<div class="position">Doo：CMS  > <a href="./member.htm?action=model">会员管理</a> > <a href="./member.htm?action=user&id=$model_id">$model_db[modelname]</a> > <!--{if $db['uid']}-->编辑<!--{else}-->添加<!--{/if}-->会员</div>
+</div>
+<div class="clear"></div>
+
+<div id="showmessage"></div>
+
+<form method="post" id="myform" onsubmit="return false;">
+<table cellpadding="2" cellspacing="1" class="table">
+	<tr> 
+		<td class="text"><font class="must">*</font>用户名：</td>
+		<td colspan="2" class="input"><input name="username" id="username" type="text" class="text" maxlength='10' value="$db[username]"> <!--{if $db['uid']}-->不可更改<!--{/if}--></td>
+	</tr> 
+	<tr> 
+		<td class="text"><font class="must">*</font>用户组：</td>
+		<td colspan="2" class="input">
+			<select name="gid">
+				<option value="0"> --- </option>
+				<!--{loop $groups $v}-->
+				<!--{if $v['id'] == $db['gid']}-->
+				<option value="$v[id]" selected>$v[name]</option>
+				<!--{else}-->
+				<option value="$v[id]">$v[name]</option>
+				<!--{/if}-->
+				<!--{/loop}-->
+			</select>
+		</td>
+	</tr>
+	<tr> 
+		<td class="text"><!--{if empty($db['uid'])}--><font class="must">*</font><!--{/if}-->登录密码：</td>
+		<td colspan="2" class="input"> <input name="password" type="password" class="text"> <!--{if $db['uid']}-->不修改密码请留空<!--{/if}--></td>
+	</tr> 
+	<tr> 
+		<td class="text"><!--{if empty($db['uid'])}--><font class="must">*</font><!--{/if}-->密码确认：</td>
+		<td colspan="2" class="input"> <input name="confirm_password" type="password" class="text" ></td>
+	</tr>
+	<tr> 
+		<td class="text">用户邮箱：</td>
+		<td colspan="2" class="input"> <input name="email" type="text" class="text" value="$db[email]"></td>
+	</tr>
+	<!--{loop $list $v}-->
+	<tr>
+		<td class="text"><!--{if $v['ismust']}--><font class="must">*</font><!--{/if}-->{$v[name]}：</td>
+		<!--{if strstr($v['fieldtype'],'pic')}-->
+		<td colspan="2" class="input upload">
+		<!--{else}-->
+		<td colspan="2" class="input">
+		<!--{/if}-->
+		<!--{echo Lua::html($v, $db);}-->
+		</td>
+	</tr>
+	<!--{/loop}-->
+	<tr> 
+		<td class="text"></td>
+		<td class="submit"><input type="submit" name="submit" value="保存" class="submit" onclick="post('./member.htm?action=$action');"/></td>
+	</tr>
+</table>
+</form>
+
+<!--{template _foot.@this->dir}-->

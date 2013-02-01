@@ -1,0 +1,53 @@
+<? if(!defined('LUA_ROOT')) exit('Access Denied'); include Lua::display('_head',$this->dir); ?>
+<div class="luatop">
+	<div class="position">Lua：CMS  > <a href="./piece.htm">碎片管理</a></div>
+</div>
+<div class="clear"></div>
+
+<div id="showmessage"></div>
+
+<div class="stat_list" style="padding-left:24px;margin:0px;">
+	<ul>
+		<li class="now"><a href="./piece.htm">默认碎片</a></li>
+		<li><a href="./piece.htm?action=any">数据管理</a></li>
+	</ul>
+</div>
+<div style="clear:both;"></div>
+
+<table cellpadding="0" cellspacing="0" class="table">
+	<tr>
+		<td colspan="3" class="centle" style="font-weight:normal;">
+			<a href="./piece.htm?action=add">添加栏目</a>&nbsp;&nbsp;
+			<font style=" color:#999;">排序越小越靠前</font>&nbsp;&nbsp;
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<form method="post" id="myform" onsubmit="return false;">
+			 <table cellpadding="0" cellspacing="0" class="table neitable columntables" style="margin:0px; border:none;">
+				<tr id="list-top">
+					<td width="60" class="list" style="padding:0px; text-align:center;">ID</td>
+					<td width="40" class="list" style="padding:0px; text-align:center;">排序</td>
+					<td class="list">栏目名称</td>
+					<td class="list" width="150" style="padding:0px; text-align:center;">所属模型</td>
+					<td width="40" class="list" style="padding:0px; text-align:center;">+内容</td>
+					<td width="60" class="list">操作</td>
+				</tr><? if(is_array($list)) { foreach($list as $v) { ?>				<tr class="mouse click">
+					<td class="list-text"><?=$v['id']?></td>
+					<td class="list-text"><input type="text" value="<?=$v['vieworder']?>" name="no_order_new[<?php echo isset($v['id']) ? $v['id'] : "";?>]" class="text no_order" /></td>
+					<td class="list-text" style="text-align:left;">&nbsp;&nbsp;<? if($v['add_perm'] == 1) { ?><a href="./content.htm?catid=<?=$v['id']?>&amp;lua=piece" title="点击进入碎片内容管理"><?=$v['name']?></a><? } else { ?><?=$v['name']?><? } ?></td>
+					<td class="list-text"><? echo $mods[$v['model_id']]['modelname'];; ?></td>
+					<td class="list-text"><? if($v['add_perm'] == 1) { ?>Y<? } else { ?><font color="red">N</font><? } ?></td>
+					<td class="list-text"><a href="./piece.htm?action=edit&amp;id=<?=$v['id']?>">修改</a> <a href="./piece.htm?action=del&amp;id=<?=$v['id']?>" onclick="return confirm('确认要删除吗?');">删除</a></td>
+				</tr>
+				<? } } ?><tr>
+					<td colspan="9" class="all-submit" style="padding:5px 0px;">
+						<input name="submit" type='submit' value='排序' class="submit li-submit" onclick="post('./piece.htm?action=order');"/>
+					</td>
+				</tr>
+			</table>
+			</form>
+		</td>
+	</tr>
+</table>
+<? include Lua::display('_foot',$this->dir); ?>

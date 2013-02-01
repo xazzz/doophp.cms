@@ -1,0 +1,59 @@
+<!--{template _head.@this->dir}-->
+
+<div class="luatop">
+	<div class="position">Doo：CMS  > <a href="./category.htm">栏目管理</a></div>
+</div>
+<div class="clear"></div>
+
+<div id="showmessage"></div>
+
+<div class="stat_list" style="padding-left:24px;margin:0px;">
+	<ul>
+		<li class="now"><a href="./category.htm">栏目列表</a></li>
+	</ul>
+</div>
+<div style="clear:both;"></div>
+
+<table cellpadding="0" cellspacing="0" class="table">
+	<tr>
+		<td colspan="3" class="centle" style="font-weight:normal;">
+			<a href="./category.htm?action=add">添加栏目</a>&nbsp;&nbsp;
+			<font style=" color:#999;">排序越小越靠前</font>&nbsp;&nbsp;
+		</td>
+	</tr>
+	<tr>
+		<td colspan="3">
+			<form method="post" id="myform" onsubmit="return false;">
+			 <table cellpadding="0" cellspacing="0" class="table neitable columntables" style="margin:0px; border:none;">
+				<tr id="list-top">
+					<td width="60" class="list" style="padding:0px; text-align:center;">ID</td>
+					<td width="40" class="list" style="padding:0px; text-align:center;">排序</td>
+					<td class="list">栏目名称</td>
+					<td class="list" width="100" style="padding:0px; text-align:center;">所属模型</td>
+					<td class="list" width="100" style="padding:0px; text-align:center;">静态名</td>
+					<td width="50" class="list" style="padding:0px; text-align:center;">+内容</td>
+					<td width="60" class="list">操作</td>
+				</tr>
+				<!--{loop $list $v}-->
+				<tr class="mouse click">
+					<td class="list-text">$v[id]</td>
+					<td class="list-text"><input type="text" value="$v[vieworder]" name="no_order_new[{$v[id]}]" class="text no_order" /></td>
+					<td class="list-text" style="text-align:left;">&nbsp;&nbsp;<!--{if $v['add_perm'] == 1}--><a href="./content.htm?catid=$v[id]" title="点击进入内容管理" style="text-decoration:none;">$v[name]</a><!--{else}-->$v[name]<!--{/if}--></td>
+					<td class="list-text"><!--{echo $mods[$v['model_id']]['modelname'];}--></td>
+					<td class="list-text">$v[filename]</td>
+					<td class="list-text"><!--{if $v['add_perm'] == 1}-->Y<!--{else}--><font color="red">N</font><!--{/if}--></td>
+					<td class="list-text"><a href="./category.htm?action=edit&id=$v[id]">修改</a> <a href="./category.htm?action=del&id=$v[id]" onclick="return confirm('确认要删除吗?');">删除</a></td>
+				</tr>
+				<!--{/loop}-->
+				<tr>
+					<td colspan="9" class="all-submit" style="padding:5px 0px;">
+						<input name="submit" type='submit' value='排序' class="submit li-submit" onclick="post('./category.htm?action=order');"/>
+					</td>
+				</tr>
+			 </table>
+			 </form>
+		</td>
+	</tr>
+</table>
+
+<!--{template _foot.@this->dir}-->

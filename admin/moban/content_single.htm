@@ -1,0 +1,75 @@
+<!--{template _head.@this->dir}-->
+
+<div class="luatop">
+	<div class="position">Doo：CMS  > <!--{if $this->lua == 'piece'}--><a href="./piece.htm">碎片管理</a><!--{else}--><a href="./category.htm">栏目管理</a><!--{/if}--> > <a href="./content.htm?catid={$catid}{echo $this->lua_url;}"><!--{echo $this->cate_db['name'];}--></a> <!--{if $rs}--><font color="blue"><u>$rs[subject]</u></font> > <!--{/if}--></div>
+</div>
+<div class="clear"></div>
+
+<div id="showmessage"></div>
+
+<div class="stat_list" style="padding-left:24px;margin:0px;">
+	<ul>
+		<!--{loop $Ftree $v}-->
+			<li class="{if $v['id']==$catid}now{/if}"><a href="./content.htm?catid={$v[id]}{echo $this->lua_url;}">$v[name]</a></li>
+		<!--{/loop}-->
+		<!--{loop $nav $v}-->
+			<li class="{if $v['id']==$tableid}now{/if}"><a href="./content.htm?catid=$catid&tableid=$v[id]&tid={$tid}{echo $this->lua_url;}">$v[modelname]<!--{if $v['id'] == $tableid}--> √<!--{/if}--></a></li>
+		<!--{/loop}-->
+	</ul>
+</div>
+<div style="clear:both;"></div>
+
+<form method="post" id="myform" onsubmit="return false;">
+<input type="hidden" name="catid" value="$catid" />
+<table cellpadding="2" cellspacing="1" class="table">
+	<!--{if $mods}-->
+	<tr>
+		<td colspan="20" class="centle" style=" height:20px; line-height:30px; font-weight:normal; padding-left:10px;">
+			<div style="float:left;">
+				下级内容：
+				<!--{loop $mods $m}-->
+					<a href="./content.htm?catid=$catid&tableid=$m[id]&tid={$rs[id]}{echo $this->lua_url;}">【{$m[modelname]}】</a>
+				<!--{/loop}-->
+			</div>	
+		</td>
+	</tr>
+	<!--{/if}-->
+	<tr> 
+		<td class="text"><font class="must">*</font>标题：</td>
+		<td colspan="2" class="input"><input name="subject" type="text" class="text" value="$rs[subject]"></td>
+	</tr> 
+	<tr> 
+		<td class="text">静态名称：</td>
+		<td colspan="2" class="input"><input name="filename" type="text" class="text" value="$rs[filename]"></td>
+	</tr>
+	<!--{loop $fields $v}-->
+	<tr>
+		<td class="text"><!--{if $v['ismust']}--><font class="must">*</font><!--{/if}-->{$v[name]}：</td>
+		<!--{if strstr($v['fieldtype'],'pic')}-->
+		<td colspan="2" class="input upload">
+		<!--{else}-->
+		<td colspan="2" class="input">
+		<!--{/if}-->
+		<!--{echo Lua::html($v, $rs, $father_db['subid'], $tid);}-->
+		</td>
+	</tr>
+	<!--{/loop}-->
+	<tr> 
+		<td class="text"></td>
+		<td class="submit"><input type="submit" name="submit" value="保存" class="submit" onclick="post('./content.htm?action=$action');"/></td>
+	</tr>
+</table>
+</form>
+
+<script>
+$(function(){
+	$('.redactor_content').redactor({
+		imageUpload: './file.htm?action=uploadEditorImage',
+		lang: 'zh_cn',
+		fixed: true, 
+		fixedBox: true
+	});
+});
+</script>
+
+<!--{template _foot.@this->dir}-->

@@ -1,0 +1,54 @@
+<? if(!defined('LUA_ROOT')) exit('Access Denied'); include Lua::display('_head',$this->dir); ?>
+<div class="luatop">
+	<div class="position">Lua：CMS  > <a href="./model.htm">模型管理</a> > <a href="./model.htm?action=table&amp;id=<?=$mid?>"><?=$mdb['modelname']?></a> > <? if($db['id']) { ?>修改<? } else { ?>新增<? } ?>数据表</div>
+</div>
+<div class="clear"></div>
+
+<div id="showmessage"></div>
+
+<form method="post" id="myform" onsubmit="return false;">
+<table cellpadding="2" cellspacing="1" class="table">
+	<tr> 
+		<td class="text">父级模型：</td>
+		<td colspan="2" class="input">
+			<select name="upid">
+				<option value="0">---</option><? if(is_array($list)) { foreach($list as $v) { ?>				<? if($v['id'] == $db['upid']) { ?>
+				<option selected value="<?=$v['id']?>"><?=$v['modelname']?></option>
+				<? } else { ?>
+				<option value="<?=$v['id']?>"><?=$v['modelname']?></option>
+				<? } ?>
+				<? } } ?></select>
+		</td>
+	</tr> 
+	<tr> 
+		<td class="text"><font class="must">*</font>模型名称：</td>
+		<td colspan="2" class="input"><input name="modelname" type="text" class="text" maxlength='10' value="<?=$db['modelname']?>"></td>
+	</tr> 
+	<tr> 
+		<td class="text"><font class="must">*</font>数据表名：</td>
+		<td colspan="2" class="input"><input name="tablename" type="text" class="text" maxlength='10' value="<?=$db['tablename']?>"> (输入字母或数字)</td>
+	</tr> 
+	<tr> 
+		<td class="text"><font class="must">*</font>数据模式：</td>
+		<td colspan="2" class="input">
+			<? if($db['id'] && $db['model_type'] == 1) { ?>
+			<label><input name="model_type" type="radio" class="radio" value="1"  checked/>单页面</label>&nbsp;&nbsp;
+			<label><input name="model_type" type="radio" class="radio" value="0"  />列表</label>&nbsp;&nbsp;&nbsp;&nbsp;
+			<? } else { ?>
+			<label><input name="model_type" type="radio" class="radio" value="1"  />单页面</label>&nbsp;&nbsp;
+			<label><input name="model_type" type="radio" class="radio" value="0" checked />列表</label>&nbsp;&nbsp;&nbsp;&nbsp;
+			<? } ?>
+			(一旦设定不可更改)
+		</td>
+	</tr>
+	<tr> 
+		<td class="text"><font class="must">*</font>父级标识：</td>
+		<td colspan="2" class="input"><input name="subid" type="text" class="text med" maxlength='10' value="<?=$db['subid']?>"> (输入字母, 一旦设定不可更改)</td>
+	</tr> 
+	<tr> 
+		<td class="text"></td>
+		<td class="submit"><input type="submit" name="submit" value="保存" class="submit" onclick="post('./model.htm?action=<?=$act?>');"/></td>
+	</tr>
+</table>
+</form>
+<? include Lua::display('_foot',$this->dir); ?>
