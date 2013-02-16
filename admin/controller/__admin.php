@@ -7,7 +7,7 @@ class __admin extends __auth{
      * 入口
      */
     public function index(){
-        $action = Lua::get_post('action');
+        $action = Lua::get_post('action1');
         $action = $action ? $action : 'home';
         $rs = $this->acl()->process($this->user['perm'], '__admin', $action);
         if ($rs){
