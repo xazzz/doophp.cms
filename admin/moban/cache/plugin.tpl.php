@@ -1,6 +1,6 @@
 <? if(!defined('LUA_ROOT')) exit('Access Denied'); include Lua::display('_head',$this->dir); ?>
 <div class="luatop">
-	<div class="position">Lua：CMS  > <a href="./plugin.htm">插件管理</a> > 所有插件</div>
+	<div class="position">Doo：CMS  > <a href="./plugin.htm">插件管理</a> > 所有插件</div>
 </div>
 <div class="clear"></div>
 
