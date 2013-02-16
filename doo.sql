@@ -257,3 +257,23 @@ CREATE TABLE `lua_piece` (
 -- ----------------------------
 -- Records of lua_piece
 -- ----------------------------
+
+-- ----------------------------
+-- Table structure for `lua_logs`
+-- ----------------------------
+DROP TABLE IF EXISTS `lua_logs`;
+CREATE TABLE `lua_logs` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `uid` int(10) NOT NULL,
+  `username` char(40) NOT NULL,
+  `ip` char(20) NOT NULL,
+  `dateline` datetime NOT NULL,
+  `actionname` char(20) NOT NULL,
+  `content` char(200) NOT NULL,
+  `path` char(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of lua_logs
+-- ----------------------------

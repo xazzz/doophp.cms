@@ -122,6 +122,7 @@ class __model extends __auth{
                 $ime = implode(',',$checkbox);
                 Doo::db()->query("$opz table $ime");
             }
+            Lua::write_log($this->user, $action[$opz].'数据表', "model_id=$model_id<br />title=".$db['modelname'], SYSNAME);
             Lua::ajaxmessage('success', $action[$opz].'成功', "./model.htm?action=table&id=$model_id");
         }else{
             Lua::ajaxmessage('error', '请选择你要操作的数据表');
@@ -140,6 +141,7 @@ class __model extends __auth{
         Doo::db()->query("delete from lua_model_table where id='$id' and model_id='$mid'");
         Doo::db()->query("delete from lua_model_field where model_id='$mid' and table_id='$id'");
         Doo::db()->query("update lua_model set tablenum=tablenum-1 where id='$mid'");
+        Lua::write_log($this->user, '删除数据表', "tableid=$id<br />model_id=$mid<br />title=".$db['tablename'], SYSNAME);
         Lua::admin_msg('提示信息', '成功删除', "./model.htm?action=table&id=$mid");
     }
     
@@ -169,6 +171,7 @@ class __model extends __auth{
             Doo::db()->query("ALTER TABLE ".$rs['tablename']." DROP ".$fieldname);
             Doo::db()->query("delete from lua_model_field where id='".Lua::get('id')."' and model_id='$model_id' and table_id='$table_id'");
         }
+        Lua::write_log($this->user, '删除模型字段', "tableid=$table_id<br />model_id=$model_id<br />table=".$rs['tablename']."<br />fieldname=$fieldname", SYSNAME);
         Lua::admin_msg('提示信息', '成功删除', "./model.htm?action=field&model_id=$model_id&id=$table_id");
     }
     
@@ -211,6 +214,7 @@ class __model extends __auth{
             $options = serialize($serialize);
         }
         Doo::db()->query("update lua_model_field set fieldoption='$options' where id='$id' and model_id='$model_id' and table_id='$table_id'");
+        Lua::write_log($this->user, '更新字段选项', "tableid=$table_id<br />model_id=$model_id<br />table=".$tableDB['tablename']."<br />id=$id", SYSNAME);
         Lua::ajaxmessage('success', '操作成功', "./model.htm?action=field_option&model_id=$model_id&table_id=$table_id&id=$id");
     }
     
@@ -291,6 +295,7 @@ class __model extends __auth{
         );
         Lua::insert('lua_model_field', $sqlarr);
         Lua::create_field($tdb['tablename'],Lua::post('fieldtype'),$fieldname);
+        Lua::write_log($this->user, '添加模型字段', "tableid=$table_id<br />model_id=$model_id<br />table=".$tdb['tablename']."<br />fieldname=$fieldname", SYSNAME);
         Lua::ajaxmessage('success', '操作成功',"./model.htm?action=field&model_id=$model_id&id=$table_id");
     }
     
@@ -335,9 +340,10 @@ class __model extends __auth{
             'model_type' => Lua::post('model_type'),
             'subid' => $subid
         );
-        Lua::insert('lua_model_table', $sqlarr);
+        $tid = Lua::insert('lua_model_table', $sqlarr);
         Doo::db()->query("CREATE TABLE `$tablename` (`id` int(10) unsigned NOT NULL AUTO_INCREMENT,`catid` int(10) NOT NULL,`subject` char(100) NOT NULL,`topped` tinyint(3) NOT NULL,`commend` tinyint(3) NOT NULL,`isdel` tinyint(1) NOT NULL,`vieworder` tinyint(1) NOT NULL,`dateline` int(10) NOT NULL,`ip` char(20) NOT NULL,`filename` char(20) NOT NULL,`uid` int(10) NOT NULL,`username` char(20) NOT NULL,PRIMARY KEY (`id`),KEY `id` (`id`),KEY `catid` (`catid`),KEY `topped` (`topped`),KEY `commend` (`commend`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
         Doo::db()->query("update lua_model set tablenum=tablenum+1 where id='$mid'");
+        Lua::write_log($this->user, '添加模型数据表', "tableid=$tid<br />model_id=$mid<br />table=$tablename", SYSNAME);
         Lua::ajaxmessage('success', '操作成功',"./model.htm?action=table&id=$mid");
     }
     
@@ -361,6 +367,7 @@ class __model extends __auth{
             'id' => $id
         );
         Lua::update('lua_model_table', $sqlarr, $where);
+        Lua::write_log($this->user, '修改数据表', "tableid=$id<br />model_id=$mid<br />modelname=$modelname", SYSNAME);
         Lua::ajaxmessage('success', '操作成功',"./model.htm?action=table&id=$mid");
     }
     
@@ -395,6 +402,7 @@ class __model extends __auth{
         Doo::db()->query("delete from lua_model_field where model_id='$id'");
         Doo::db()->query("delete from lua_model_table where model_id='$id'");
         Doo::db()->query("delete from lua_model where id='$id'");
+        Lua::write_log($this->user, '删除模型', "model_id=$id<br />modelname=".$db['modelname'], SYSNAME);
         Lua::admin_msg('提示信息', '成功删除', './model.htm');
     }
     
@@ -443,10 +451,13 @@ class __model extends __auth{
             'modelname' => $modelname,
             'intro' => $intro
         );
+        $id = Lua::get('id');
         $where = array(
-            'id' => Lua::get('id')
+            'id' => $id
         );
         Lua::update('lua_model', $sqlarr, $where);
+        $db = $this->_get($id, 1);
+        Lua::write_log($this->user, '修改模型', "model_id=$id<br />modelname=".$db['modelname'], SYSNAME);
         Lua::ajaxmessage('success', '操作成功', './model.htm');
     }
     
@@ -509,7 +520,8 @@ class __model extends __auth{
             'prefix' => $prefix,
             'mtype' => Lua::post('mtype')
         );
-        Lua::insert('lua_model', $sqlarr);
+        $id = Lua::insert('lua_model', $sqlarr);
+        Lua::write_log($this->user, '增加模型', "model_id=$id<br />modelname=$modelname", SYSNAME);
         Lua::ajaxmessage('success', '操作成功', './model.htm');
     }
     

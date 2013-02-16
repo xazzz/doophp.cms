@@ -64,6 +64,8 @@ class __admin extends __auth{
         $field = $lua ? 'piece_can' : 'category_can';
         $url = $lua ? "&lua=$lua" : "";
         Lua::update('lua_admin', array($field=>$v1), array('uid'=>$uid));
+        $log = "uid=$uid<br />title=".($lua ? "碎片栏目" : "栏目");
+        Lua::write_log($this->user, '权限设置', $log, SYSNAME);
         Lua::ajaxmessage('success', '操作成功', "./admin.htm?action=perm_category&uid=$uid".$url);
     }
     
@@ -80,6 +82,8 @@ class __admin extends __auth{
         $field = $lua ? 'piece_can' : 'category_can';
         $url = $lua ? "&lua=$lua" : "";
         Lua::update('lua_admin', array($field=>''), array('uid'=>$uid));
+        $log = "uid=$uid<br />title=".($lua ? "清空碎片栏目" : "清空栏目");
+        Lua::write_log($this->user, '权限设置', $log, SYSNAME);
         Lua::ajaxmessage('success', '操作成功', "./admin.htm?action=perm_category&uid=$uid".$url);
     }
     
@@ -190,6 +194,7 @@ class __admin extends __auth{
         $acl[$udb['perm']]['allow'] = $__code;
         $data = $this->_acl($acl);
         file_put_contents($aclfile, $data);
+        Lua::write_log($this->user, 'ACL权限设置', "group=".$udb['perm']."<br />title=更新", SYSNAME);
         Lua::admin_msg('信息提示', '操作成功', './admin.htm');  
     }
     
@@ -267,7 +272,8 @@ class __admin extends __auth{
             'logintime' => time(),
             'channel' => $channel
         );
-        Lua::insert('lua_admin',$sqlarr);
+        $lastid = Lua::insert('lua_admin',$sqlarr);
+        Lua::write_log($this->user, '增加管理员', "uid=$lastid<br />title=$username", SYSNAME);
         Lua::ajaxmessage('success', '操作成功', './admin.htm');        
     }
     
@@ -313,6 +319,7 @@ class __admin extends __auth{
             $sqlarr['password'] = md5($password);
         }
         Lua::update('lua_admin', $sqlarr, $where);
+        Lua::write_log($this->user, '修改管理员', "uid=".Lua::get('uid')."<br />title=$username", SYSNAME);
         Lua::ajaxmessage('success', '操作成功', './admin.htm');  
     }
 
@@ -320,7 +327,9 @@ class __admin extends __auth{
      * 删除管理员
      */
     private function del(){
-        Doo::db()->query("delete from lua_admin where uid='".Lua::get('uid')."'");
+        $uid = Lua::get('uid');
+        $mdb = Lua::get_one("select * from lua_admin where uid='$uid'");
+        Doo::db()->query("delete from lua_admin where uid='$uid'");
         $list = Lua::get_more("select * from lua_admin");
         $perms = array();
         foreach ($list as $v){
@@ -336,6 +345,7 @@ class __admin extends __auth{
         }
         $data = $this->_acl($acl);
         file_put_contents($aclfile, $data);
+        Lua::write_log($this->user, '删除管理员', "uid=$uid<br />title=".$mdb['username'], SYSNAME);
         Lua::admin_msg('提示信息', '成功删除', './admin.htm');
     }
     

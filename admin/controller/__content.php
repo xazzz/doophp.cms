@@ -138,10 +138,24 @@ class __content extends __auth{
     }
     
     /*
+     * 批量日志操作
+     */
+    private function batch_log($msg, $true = 0){
+        if ($true == 1){
+            $catid = Lua::post('catid');
+        }else{
+            $catid = Lua::post('trueid');
+        }
+        $catdb = Lua::get_one("select name from lua_category where id='$catid'");
+        Lua::write_log($this->user, '批量'.$msg.'信息', "catid=$catid<br />title=".$catdb['name'], SYSNAME);
+    }
+    
+    /*
      * 移动内容
      */
     private function moveit(){
         $catid = Lua::post('catid');
+        $this->batch_log('移动');
         $this->_option('catid', $catid, '移动成功');
     }
     
@@ -167,6 +181,7 @@ class __content extends __auth{
                     $lastid = Doo::db()->lastInsertId();
                     Doo::db()->query("update $tablename set catid='$catid',dateline='".time()."' where id='$lastid'");
                 }
+                $this->batch_log('复制');
                 Lua::ajaxmessage('success', '复制成功', "./content.htm?catid=$catid".$this->lua_url);
             }
         }
@@ -214,6 +229,7 @@ class __content extends __auth{
      * 放入回收站
      */
     private function recycleit(){
+        $this->batch_log('移除');
         $this->_option('isdel', 1, '成功放入回收站');
     }
     
@@ -221,6 +237,7 @@ class __content extends __auth{
      * 数据还原
      */
     private function undoit(){
+        $this->batch_log('还原');
         $this->_option('isdel', 0, '成功还原');
     }
     
@@ -240,6 +257,7 @@ class __content extends __auth{
                 }
             }
         }
+        $this->batch_log('排序');
         $this->_option('vieworder', $r, '成功排序');
     }
     
@@ -248,6 +266,8 @@ class __content extends __auth{
      */
     private function commendit(){
         $cid = Lua::post('catid');
+        $msg = $cid == 0 ? '取消推荐' : '推荐' ;
+        $this->batch_log($msg);
         $this->_option('commend', $cid, '推荐成功', 1);
     }
     
@@ -263,6 +283,8 @@ class __content extends __auth{
      */
     private function toppedit(){
         $cid = Lua::post('catid');
+        $msg = $cid == 0 ? '取消置顶' : '置顶' ;
+        $this->batch_log($msg);
         $this->_option('topped', $cid, '置顶成功', 1);
     }
     
@@ -291,6 +313,7 @@ class __content extends __auth{
                     $this->_table_for_del($cate_db['model_id'], $mode_db['id'], $mode_db['subid'], $id);
                 }
                 Doo::db()->query("delete from ".$mode_db['tablename']." where id in ($im)");
+                $this->batch_log('删除', 1);
                 Lua::ajaxmessage('success', '删除成功', "./content.htm?catid=$catid".$suffix.$this->lua_url);
             }
         }
@@ -399,6 +422,7 @@ class __content extends __auth{
             Lua::ajaxmessage('error', $query);
         }
         Lua::update($this->mode_db['tablename'], $query, array('id'=>$id));
+        Lua::write_log($this->user, '修改信息', "catid=$catid<br />id=$id<br />title=".$query['subject'], SYSNAME);
         Lua::ajaxmessage('success', '操作成功', "./content.htm?catid=$catid".$suffix.$this->lua_url);
     }
     
@@ -432,6 +456,7 @@ class __content extends __auth{
         }        
         if ($db){
             Lua::update($this->mode_db['tablename'], $query, array('id'=>$db['id']));
+            $lastid = $db['id'];
         }else{
             $query['catid'] = $catid;
             $query['dateline'] = time();
@@ -439,8 +464,9 @@ class __content extends __auth{
             $query['isdel'] = 0;
             $query['uid'] = $this->user['uid'];
             $query['username'] = $this->user['username'];
-            Lua::insert($this->mode_db['tablename'], $query);
+            $lastid = Lua::insert($this->mode_db['tablename'], $query);
         }
+        Lua::write_log($this->user, '更新单页面信息', "catid=$catid<br />id=$lastid<br />title=".$query['subject'], SYSNAME);
         Lua::ajaxmessage('success', '操作成功', "./content.htm?catid=$catid".$suffix.$this->lua_url);
     }
     
@@ -470,7 +496,8 @@ class __content extends __auth{
         $query['isdel'] = 0;
         $query['uid'] = $this->user['uid'];
         $query['username'] = $this->user['username'];
-        Lua::insert($this->mode_db['tablename'], $query);
+        $id = Lua::insert($this->mode_db['tablename'], $query);
+        Lua::write_log($this->user, '增加信息', "catid=$catid<br />id=$id<br />title=".$query['subject'], SYSNAME);
         Lua::ajaxmessage('success', '操作成功', "./content.htm?catid=$catid".$suffix.$this->lua_url);
     }
     

@@ -3,6 +3,22 @@
 class Lua{
     
     /*
+     * 日志操作
+     */
+    public static function write_log($user, $action, $content, $channel){
+        $sqlarr = array(
+            'uid' => $user['uid'],
+            'username' => $user['username'],
+            'ip' => $user['loginip'],
+            'dateline' => date('Y-m-d H:i:s'),
+            'actionname' => $action,
+            'content' => $content,
+            'path' => $channel
+        );
+        Lua::insert('lua_logs', $sqlarr);
+    }
+    
+    /*
      * 后台所有权限数组
      */
     public static function perms(){

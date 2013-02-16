@@ -81,6 +81,7 @@ class __piece extends __auth{
             'vieworder' => Lua::post('vieworder')
         );
         Lua::update('lua_piece', $sqlarr, array('id'=>$id));
+        Lua::write_log($this->user, '修改碎片栏目', "catid=$id<br />title=".$name, SYSNAME);
         Lua::ajaxmessage('success', '操作成功', './piece.htm');
     }
     
@@ -118,6 +119,7 @@ class __piece extends __auth{
             }
         }
         Lua::delete('lua_piece', array('systemname'=>SYSNAME,'id'=>$id));
+        Lua::write_log($this->user, '删除碎片栏目', "catid=$id<br />title=".$db['name'], SYSNAME);
         Lua::admin_msg('操作提示', '成功删除', './piece.htm');
     }
     
@@ -141,7 +143,8 @@ class __piece extends __auth{
             'name' => $name,
             'vieworder' => Lua::post('vieworder')
         );
-        Lua::insert('lua_piece', $sqlarr);
+        $lastid = Lua::insert('lua_piece', $sqlarr);
+        Lua::write_log($this->user, '添加碎片栏目', "catid=$lastid<br />title=".$name, SYSNAME);
         Lua::ajaxmessage('success', '操作成功', './piece.htm');
     }
     
@@ -230,7 +233,8 @@ class __piece extends __auth{
         $pri = $this->_pri($fields);
         $var = Lua::get($pri);
         $post = Lua::post('post');
-        Lua::insert($db['tablename'], $post);
+        $lastid = Lua::insert($db['tablename'], $post);
+        Lua::write_log($this->user, '添加任意数据', "table=".$db['tablename']."<br />id=$lastid<br />title=".$post['subject'], SYSNAME);
         Lua::ajaxmessage('success', '操作成功', "./piece.htm?action=any&tableid=$tableid");
     }
     
@@ -244,7 +248,8 @@ class __piece extends __auth{
         $pri = $this->_pri($fields);
         $var = Lua::get($pri);
         $post = Lua::post('post');
-        Lua::insert($db['tablename'], $post, 1);
+        $lastid = Lua::insert($db['tablename'], $post, 1);
+        Lua::write_log($this->user, '修改任意数据', "table=".$db['tablename']."<br />id=$lastid<br />title=".$post['subject'], SYSNAME);
         Lua::ajaxmessage('success', '操作成功', "./piece.htm?action=any&tableid=$tableid");
     }
     
@@ -257,7 +262,9 @@ class __piece extends __auth{
         $fields = $this->_fields($db['tablename']);
         $pri = $this->_pri($fields);
         $var = Lua::get($pri);
+        $sdb = Lua::get_one("select subject from ".$db['tablename']." where $pri='$var'");
         Doo::db()->query("delete from ".$db['tablename']." where $pri='$var'");
+        Lua::write_log($this->user, '删除任意数据', "table=".$db['tablename']."<br />$pri=$var<br />title=".$sdb['subject'], SYSNAME);
         Lua::admin_msg('提示信息', '成功删除', "./piece.htm?action=any&tableid=$tableid");
     }
     

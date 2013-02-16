@@ -125,6 +125,7 @@ class __member extends __auth{
             $option = serialize($serialize);
         }
         Doo::db()->query("update lua_member_model_field set fieldoption='$option' where systemname='".SYSNAME."' and model_id='$model_id' and id='$id'");
+        Lua::write_log($this->user, '更新会员字段选项', "model_id=$model_id<br />id=$id", SYSNAME);
         Lua::ajaxmessage('success', '操作成功',"./member.htm?action=field_option&model_id=$model_id&id=$id");
     }
     
@@ -181,6 +182,7 @@ class __member extends __auth{
             'systemname' => SYSNAME
         );
         Lua::insert('lua_member_model_group', $sqlarr);
+        Lua::write_log($this->user, '增加会员用户组', "model_id=".Lua::get('model_id')."<br />id=$id<br />title=$name", SYSNAME);
         Lua::ajaxmessage('success', '操作成功', "./member.htm?action=model_group&id=".Lua::get('model_id'));
     }
     
@@ -217,6 +219,7 @@ class __member extends __auth{
             'id' => $id
         );
         Lua::update('lua_member_model_group', $sqlarr, $where);
+        Lua::write_log($this->user, '修改会员用户组', "model_id=$model_id<br />id=$id<br />title=$name", SYSNAME);
         Lua::ajaxmessage('success', '修改成功', "./member.htm?action=model_group&id=$model_id");
     }
     
@@ -227,7 +230,9 @@ class __member extends __auth{
         $model_id = Lua::get('model_id');
         $model_db = $this->_model($model_id);
         $id = Lua::get('id');
+        $db = Lua::get_one("select name from lua_member_model_group where systemname='".SYSNAME."' and model_id='$model_id' and id='$id'");
         Lua::delete('lua_member_model_group', array('systemname'=>SYSNAME,'model_id'=>$model_id,'id'=>$id));
+        Lua::write_log($this->user, '删除会员用户组', "model_id=$model_id<br />id=$id<br />title=".$db['name'], SYSNAME);
         Lua::admin_msg('提示信息', '成功删除', "./member.htm?action=model_group&id=$model_id");
     }
     
@@ -241,6 +246,7 @@ class __member extends __auth{
         Lua::delete('lua_member_model', array('systemname'=>SYSNAME,'id'=>$id));
         Lua::delete('lua_member_model_field', array('systemname'=>SYSNAME,'model_id'=>$id));
         Lua::delete('lua_member_model_group', array('systemname'=>SYSNAME,'model_id'=>$id));
+        Lua::write_log($this->user, '删除会员模型', "id=$id<br />title=".$db['modelname'], SYSNAME);
         Lua::admin_msg('提示信息', '成功删除', './member.htm?action=model');
     }
     
@@ -272,7 +278,10 @@ class __member extends __auth{
     private function user_del(){
         $mid = Lua::get('mid');
         $mdb = $this->_model($mid);
-        Lua::delete($mdb['tablename'], array('uid'=>Lua::get('uid')));
+        $uid = Lua::get('uid');
+        $db = Lua::get_one("select username from ".$mdb['tablename']." where uid='$uid'");
+        Lua::delete($mdb['tablename'], array('uid'=>$uid));
+        Lua::write_log($this->user, '删除模型会员', "model_id=$mid<br />uid=$uid<br />title=".$db['username'], SYSNAME);
         Lua::admin_msg('提示信息', '成功删除', "./member.htm?action=user&id=$mid");
     }
     
@@ -357,7 +366,10 @@ class __member extends __auth{
             }
         }
         $sqlarr = array_merge_recursive($sqlarr, $custom);
-        Lua::update($model_db['tablename'], $sqlarr, array('uid'=>Lua::get('uid')));
+        $uid = Lua::get('uid');
+        $udb = Lua::get_one("select username from ".$model_db['tablename']." where uid='$uid'");
+        Lua::update($model_db['tablename'], $sqlarr, array('uid'=>$uid));
+        Lua::write_log($this->user, '修改模型会员', "model_id=$model_id<br />uid=$uid<br />title=".$udb['username'], SYSNAME);
         Lua::ajaxmessage('success', '操作成功', "./member.htm?action=user&id=$model_id");
     }
     
@@ -417,7 +429,8 @@ class __member extends __auth{
             'gid' => Lua::post('gid')
         );
         $sqlarr = array_merge_recursive($sqlarr, $custom);
-        Lua::insert($model_db['tablename'], $sqlarr);
+        $lastid = Lua::insert($model_db['tablename'], $sqlarr);
+        Lua::write_log($this->user, '增加模型会员', "model_id=$model_id<br />uid=$lastid<br />title=$username", SYSNAME);
         Lua::ajaxmessage('success', '操作成功', "./member.htm?action=user&id=$model_id");
     }
     
@@ -457,6 +470,7 @@ class __member extends __auth{
         );
         Lua::insert('lua_member_model_field', $sqlarr);
         Lua::create_field($db['tablename'], Lua::post('fieldtype'), $fieldname);
+        Lua::write_log($this->user, '增加会员字段', "model_id=$id<br />table=".$db['tablename']."<br />field=$fieldname", SYSNAME);
         Lua::ajaxmessage('success', '操作成功', "./member.htm?action=model_field&id=$id");
     }
     
@@ -506,6 +520,7 @@ class __member extends __auth{
         $mdb = $this->_model($mid);
         Doo::db()->query("ALTER TABLE ".$mdb['tablename']." DROP ".$id);
         Doo::db()->query("delete from lua_member_model_field where model_id='$mid' and fieldname='$id'");
+        Lua::write_log($this->user, '删除会员字段', "model_id=$mid<br />table=".$mdb['tablename']."<br />field=$id", SYSNAME);
         Lua::admin_msg('提示信息', '成功删除', "./member.htm?action=model_field&id=$mid");
     }
     
@@ -571,6 +586,7 @@ class __member extends __auth{
         $default_create_table = str_replace('lua_member', $tablename, $default_create_table);
         Doo::db()->query($default_create_table);
         Doo::db()->query("TRUNCATE TABLE `".$tablename."`");
+        Lua::write_log($this->user, '增加会员模型', "model_id=$mid<br />table=$tablename<br />modelname=$modelname", SYSNAME);
         Lua::ajaxmessage('success', '操作成功', './member.htm?action=model');
     }
     
@@ -578,7 +594,10 @@ class __member extends __auth{
      * 删除注册会员
      */
     private function del(){
-        Doo::db()->query("delete from lua_member where uid='".Lua::get('uid')."'");
+        $uid = Lua::get('uid');
+        $udb = Lua::get_one("select username from lua_member where uid='$uid'");
+        Doo::db()->query("delete from lua_member where uid='$uid'");
+        Lua::write_log($this->user, '删除注册会员', "uid=$uid<br />username=".$udb['username'], SYSNAME);
         Lua::admin_msg('提示信息', '成功删除', './member.htm');
     }
     
@@ -615,6 +634,8 @@ class __member extends __auth{
             $sqlarr['password'] = md5($password);
         }
         Lua::update('lua_member', $sqlarr, array('uid'=>$uid));
+        $udb = Lua::get_one("select username from lua_member where uid='$uid'");
+        Lua::write_log($this->user, '修改注册会员', "uid=$uid<br />username=".$udb['username'], SYSNAME);
         Lua::ajaxmessage('success', '操作成功','./member.htm');
     }
     
@@ -656,7 +677,8 @@ class __member extends __auth{
             'status' => 1,
             'username' => $username
         );
-        Lua::insert('lua_member', $sqlarr);
+        $uid = Lua::insert('lua_member', $sqlarr);
+        Lua::write_log($this->user, '增加注册会员', "uid=$uid<br />username=$username", SYSNAME);
         Lua::ajaxmessage('success', '操作成功','./member.htm');
     }
     

@@ -53,6 +53,7 @@ class __category extends __auth{
         }
         Lua::delete('lua_category', array('systemname'=>SYSNAME,'id'=>$id));
         $this->_cache();
+        Lua::write_log($this->user, '删除栏目', "catid=$id<br />title=".$db['name'], SYSNAME);
         Lua::admin_msg('操作提示', '成功删除', './category.htm');
     }
     
@@ -137,6 +138,7 @@ class __category extends __auth{
         );
         Lua::update('lua_category', $sqlarr, array('id'=>$id));
         $this->_cache();
+        Lua::write_log($this->user, '修改栏目', "catid=$id<br />title=".$name, SYSNAME);
         Lua::ajaxmessage('success', '操作成功', './category.htm');
     }
     
@@ -168,8 +170,9 @@ class __category extends __auth{
             'systemname' => SYSNAME,
             'upid' => Lua::post('upid')
         );
-        Lua::insert('lua_category', $sqlarr);
+        $lastid = Lua::insert('lua_category', $sqlarr);
         $this->_cache();
+        Lua::write_log($this->user, '添加栏目', "catid=$lastid<br />title=".$name, SYSNAME);
         Lua::ajaxmessage('success', '操作成功', './category.htm');
     }
     

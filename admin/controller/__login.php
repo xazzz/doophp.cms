@@ -22,6 +22,7 @@ class __login extends DooController{
         $session = Doo::session('Lua');
         $session->auth = $auth;
         Doo::db()->query("update lua_admin set logintime='".time()."',logs=logs+1,loginip='".$this->clientIP()."' where uid='".$user['uid']."'");
+        Lua::write_log($user, '登录后台', '---', $user['channel']);
         Lua::admin_msg('操作提示', '登录成功','/'.ADMIN_ROOT);
     }
     
@@ -30,6 +31,12 @@ class __login extends DooController{
      */
     public function logout(){
         $session = Doo::session('Lua');
+        $auth = $session->get('auth');
+        $auth = empty($auth) ? array(0,'') : Lua::clean(explode("\t",Lua::authcode($auth, 'DECODE')), 1);
+        $user = Lua::get_one("select * from lua_admin where uid='".intval($auth[0])."' and password='".$auth[1]."' and gid='1'");
+        if ($user){
+            Lua::write_log($user, '退出系统', '---', $user['channel']);
+        }
         $session->auth = '';
         Lua::admin_msg('操作提示', '成功退出系统','/'.ADMIN_ROOT);
     }
