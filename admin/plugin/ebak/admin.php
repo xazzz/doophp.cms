@@ -186,6 +186,11 @@ class ebak extends __auth{
         $this->jsonp('备份'.$btb[$t-1].'表成功，正在进入下一个表备份．．．．．．', 0, 0, $t, 0, 0);
     }    
     
+    private function jsonb($info, $dir, $p, $t){
+        echo json_encode(array('info'=>$info, 'dir'=>$dir, 'p'=>$p, 't'=>$t));
+        exit;
+    }
+    
     private function jsonp($info,$s = 0,$p = 0,$t = 0,$alltotal = 0,$fnum = 0){
         echo json_encode(array('s'=>$s, 'info'=>$info, 'p'=>$p, 't'=>$t, 'alltotal'=>$alltotal, 'fnum'=>$fnum));
         exit;
