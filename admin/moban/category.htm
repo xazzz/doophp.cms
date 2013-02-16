@@ -35,6 +35,9 @@
 					<td width="60" class="list">操作</td>
 				</tr>
 				<!--{loop $list $v}-->
+				<!--{if $cans && !in_array($v['id'], $cans) && $v['add_perm'] == 1}-->
+					<!--{eval continue;}-->
+				<!--{/if}-->
 				<tr class="mouse click">
 					<td class="list-text">$v[id]</td>
 					<td class="list-text"><input type="text" value="$v[vieworder]" name="no_order_new[{$v[id]}]" class="text no_order" /></td>

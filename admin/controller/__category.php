@@ -26,6 +26,10 @@ class __category extends __auth{
     private function home(){
         $mods = $this->_models();
         $list = $cate = $this->_tree(0, 0, ' ');
+        $cans = array();
+        if ($this->user['category_can']){
+            $cans = unserialize($this->user['category_can']);
+        }
         include Lua::display('category', $this->dir);
     }
     

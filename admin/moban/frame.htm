@@ -37,7 +37,7 @@
 								<!--{/loop}-->
 							<!--{else}-->
 								<!--{loop $list $v}-->
-									<!--{if $this->user['perm'] == $v['groupname']}-->
+									<!--{if $this->user['channel'] == $v['path']}-->
 									<li class="list"><a href="/$v[path]/{ADMIN_ROOT}/" class="onnav"><span class="$v[classname]"></span>$v[name]</a></li>
 									<!--{/if}-->
 								<!--{/loop}-->

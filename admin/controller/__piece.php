@@ -26,6 +26,10 @@ class __piece extends __auth{
     private function home(){
         $mods = $this->_models();
         $list = $cate = $this->_tree(0, 0, ' ');
+        $cans = array();
+        if ($this->user['piece_can']){
+            $cans = unserialize($this->user['piece_can']);
+        }
         include Lua::display('piece', $this->dir);
     }
     
