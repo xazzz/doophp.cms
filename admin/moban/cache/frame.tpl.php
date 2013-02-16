@@ -33,7 +33,7 @@
 									<? } else { ?>
 									<li class="list"><a href="/<?=$v['path']?>/<?=ADMIN_ROOT?>/"><span class="<?=$v['classname']?>"></span><?=$v['name']?></a></li>
 									<? } ?>
-								<? } } } else { if(is_array($list)) { foreach($list as $v) { ?>									<? if($this->user['perm'] == $v['groupname']) { ?>
+								<? } } } else { if(is_array($list)) { foreach($list as $v) { ?>									<? if($this->user['channel'] == $v['path']) { ?>
 									<li class="list"><a href="/<?=$v['path']?>/<?=ADMIN_ROOT?>/" class="onnav"><span class="<?=$v['classname']?>"></span><?=$v['name']?></a></li>
 									<? } ?>
 								<? } } } ?>
@@ -66,6 +66,7 @@
 							<li><a href="./channel.htm" target="main">频道管理</a></li>
 							<li><a href="./model.htm" target="main">模型管理</a></li>
 							<li><a href="./plugin.htm" target="main">插件管理</a></li>
+							<li><a href="./log.htm" target="main">日志管理</a></li>
 							<? } else { ?>
 							<li><a href="./member.htm" target="main">会员管理</a></li>
 							<li><a href="./category.htm" target="main">栏目管理</a></li>

@@ -47,6 +47,7 @@ Doo::acl()->rules = $acl;
 Doo::acl()->defaultFailedRoute = '/'.SYSNAME.'/401.htm';
 
 Doo::conf()->set($config);
+require_once $config['BASE_PATH'].'diagnostic/debug.php';
 
 Doo::db()->setDb($dbconfig, $config['APP_MODE']);
 Doo::db()->sql_tracking = true;

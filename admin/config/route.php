@@ -15,3 +15,5 @@ $route['*']['/plugin.htm'] = array('__plugin', 'index');
 $route['*']['/model.htm'] = array('__model', 'index');
 
 $route['*']['/channel.htm'] = array('__channel', 'index');
+
+$route['*']['/log.htm'] = array('__log', 'index');
