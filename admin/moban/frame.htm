@@ -24,21 +24,21 @@
 						<ul id="topnav">
 							<!--{if $this->user['perm'] == SUPER_MAN}-->
 								<!--{if SYSNAME == ADMIN_ROOT}-->
-								<li class="list"><a href="/{ADMIN_ROOT}/" class="onnav"><span class="c1"></span>系统设置</a></li>
+								<li class="list"><a href="/{ADMIN_ROOT}/" class="onnav"><span style="background:url(/{ADMIN_ROOT}/icon.png) no-repeat;"></span>系统设置</a></li>
 								<!--{else}-->
-								<li class="list"><a href="/{ADMIN_ROOT}/"><span class="c1"></span>系统设置</a></li>
+								<li class="list"><a href="/{ADMIN_ROOT}/"><span style="background:url(/{ADMIN_ROOT}/icon.png) no-repeat;"></span>系统设置</a></li>
 								<!--{/if}-->
 								<!--{loop $list $v}-->
 									<!--{if SYSNAME == $v['path']}-->
-									<li class="list"><a href="/$v[path]/{ADMIN_ROOT}/" class="onnav"><span class="$v[classname]"></span>$v[name]</a></li>
+									<li class="list"><a href="/$v[path]/{ADMIN_ROOT}/" class="onnav"><span style="background:url(/$v[path]/icon.png) no-repeat;"></span>$v[name]</a></li>
 									<!--{else}-->
-									<li class="list"><a href="/$v[path]/{ADMIN_ROOT}/"><span class="$v[classname]"></span>$v[name]</a></li>
+									<li class="list"><a href="/$v[path]/{ADMIN_ROOT}/"><span style="background:url(/$v[path]/icon.png) no-repeat;"></span>$v[name]</a></li>
 									<!--{/if}-->
 								<!--{/loop}-->
 							<!--{else}-->
 								<!--{loop $list $v}-->
 									<!--{if $this->user['channel'] == $v['path']}-->
-									<li class="list"><a href="/$v[path]/{ADMIN_ROOT}/" class="onnav"><span class="$v[classname]"></span>$v[name]</a></li>
+									<li class="list"><a href="/$v[path]/{ADMIN_ROOT}/" class="onnav"><span style="background:url(/$v[path]/icon.png) no-repeat;"></span>$v[name]</a></li>
 									<!--{/if}-->
 								<!--{/loop}-->
 							<!--{/if}-->
