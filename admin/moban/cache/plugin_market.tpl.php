@@ -1,6 +1,6 @@
 <? if(!defined('LUA_ROOT')) exit('Access Denied'); include Lua::display('_head',$this->dir); ?>
 <div class="luatop">
-	<div class="position">Lua：CMS  > <a href="./plugin.htm">插件管理</a> > 插件市场</div>
+	<div class="position">Doo：CMS  > <a href="./plugin.htm">插件管理</a> > 插件市场</div>
 </div>
 <div class="clear"></div>
 
@@ -16,7 +16,7 @@
 	<tr>
 		<td class="centle" colspan="8" style=" height:20px; line-height:30px; font-weight:normal; padding-left:10px;">
 			<div style="float:left;">感谢大家的共享! </div>
-			<div style="float:right;">更多插件请访问：<a href="http://www.luacms.com/" target='_blank'>Luacms</a></div>
+			<div style="float:right;">更多插件请访问：<a href="http://www.doophp.net/" target='_blank'>DooPHP</a></div>
 		</td>
 	</tr>
 </table>

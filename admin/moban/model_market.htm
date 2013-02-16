@@ -8,9 +8,6 @@
 <div class="stat_list" style="padding-left:24px;margin:0px;">
 	<ul>
 		<li><a href="./model.htm">已安装模型</a></li>
-		<!--{loop @this->mtype $k $v}-->
-		<li class="{if $k==$mtype}now{/if}"><a href="./model.htm?mtype=$k">{$v}模型</a></li>
-		<!--{/loop}-->
 		<li class="now"><a href="./model.htm?action=market">模型市场</a></li>
 	</ul>
 </div>
