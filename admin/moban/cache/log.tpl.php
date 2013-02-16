@@ -52,7 +52,7 @@
 	</tr>
 	<? } } ?><tr>
 		<td class="all-submit" colspan="7" style="padding:5px 10px;">
-			<input name="submit" type='submit' value='批量删除' class="submit li-submit" onclick="del();"/> 
+			<input name="submit" type='submit' value='批量删除' class="submitmi" onclick="del();" style="padding:2px;"/> 
 			<form method="post" action="./log.htm?action=deltime">
 			 // 删除从
 			<input name="startday" type="text" class="text med jsdate" value="" size="12" style="height:18px;line-height:18px;">
