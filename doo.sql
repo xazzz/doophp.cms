@@ -183,6 +183,7 @@ CREATE TABLE `lua_model` (
   `intro` char(100) NOT NULL,
   `prefix` char(20) NOT NULL,
   `mtype` tinyint(1) NOT NULL,
+  `cid` int(10) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
