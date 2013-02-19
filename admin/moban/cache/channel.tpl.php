@@ -18,7 +18,6 @@
 		<td class="list" >创建时间</td>
 		<td class="list">绑定域名</td>
 		<td width="40" class="list" style="padding:0px; text-align:center;">状态</td>
-		<td width="40" class="list" style="padding:0px; text-align:center;">样式</td>
 		<td width="100" class="list" >操作</td>
 	</tr><? if(is_array($list)) { foreach($list as $v) { ?>	<tr class="mouse click">
 		<td class="list-text"><?=$v['id']?></td>

@@ -19,6 +19,13 @@ class __model extends __auth{
     }
     
     /*
+     * 可用频道列表
+     */
+    private function _channel(){
+        return Lua::get_more("select * from lua_channel where status='1'");
+    }
+    
+    /*
      * 已安装模型列表
      */
     private function home(){
@@ -26,14 +33,20 @@ class __model extends __auth{
         $where = "";
         $url   = "./model.htm";
         if ($mtype){
-            $where = "where mtype='$mtype'";
+            $where .= "and mtype='$mtype'";
             $url   = "./model.htm?mtype=$mtype";
         }
-        $count = Doo::db()->count("select count(*) from lua_model $where");
+        $cid = Lua::get('cid');
+        if ($cid){
+            $where .= " and cid='$cid' ";
+            $url = $mtype ? "./model.htm?mtype=$mtype&cid=$cid" : "./model.htm?cid=$cid" ;
+        }
+        $count = Doo::db()->count("select count(*) from lua_model where id>0 $where");
         $tpp = 20;
         $limit = (($this->page - 1) * $tpp).','.$tpp;
-        $list = Lua::get_more("select * from lua_model $where order by id desc limit ".$limit);
+        $list = Lua::get_more("select * from lua_model where id>0 $where order by id desc limit ".$limit);
         $page = Lua::page($url, $this->page, $count, $tpp);
+        $channels = $this->_channel();
         include Lua::display('model', $this->dir);
     }
     
@@ -412,6 +425,7 @@ class __model extends __auth{
     private function add(){
         $action = 'save_add';
         $db = Lua::db_array('lua_model');
+        $channels = $this->_channel();
         include Lua::display('model_add', $this->dir);
     }
     
@@ -490,6 +504,10 @@ class __model extends __auth{
      * 保存添加模型
      */
     private function save_add(){
+        $cid = Lua::post('cid');
+        if (empty($cid)){
+            Lua::ajaxmessage('error', '请选择所属频道');
+        }
         $modelname = Lua::post('modelname');
         if (empty($modelname)){
             Lua::ajaxmessage('error', '模型名称');
@@ -518,7 +536,8 @@ class __model extends __auth{
             'modelname' => $modelname,
             'status' => 1,
             'prefix' => $prefix,
-            'mtype' => Lua::post('mtype')
+            'mtype' => Lua::post('mtype'),
+            'cid' => $cid
         );
         $id = Lua::insert('lua_model', $sqlarr);
         Lua::write_log($this->user, '增加模型', "model_id=$id<br />modelname=$modelname", SYSNAME);

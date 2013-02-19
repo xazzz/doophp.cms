@@ -10,6 +10,12 @@
 <table cellpadding="2" cellspacing="1" class="table">
 	<? if($action == 'save_add') { ?>
 	<tr> 
+		<td class="text"><font class="must">*</font>所属频道：</td>
+		<td colspan="2" class="input">
+		<select name="cid"><? if(is_array($channels)) { foreach($channels as $v) { ?>			<option value="<?=$v['id']?>"><?=$v['name']?></option>
+			<? } } ?></select></td>
+	</tr>
+	<tr> 
 		<td class="text"><font class="must">*</font>模型类别：</td>
 		<td colspan="2" class="input">
 		<select name="mtype"><? if(is_array($this->mtype)) { foreach($this->mtype as $k => $v) { ?><option value="<?=$k?>"><?=$v?></option><? } } ?></select></td>

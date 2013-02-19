@@ -49,7 +49,8 @@ class __channel extends __auth{
     private function save_add(){
         $sqlarr = $this->_check(1);
         $sqlarr['createtime'] = time();
-        Lua::insert('lua_channel', $sqlarr);
+        $id = Lua::insert('lua_channel', $sqlarr);
+        Lua::write_log($this->user, '增加频道', "id=$id<br />title=".$sqlarr['name'], SYSNAME);
         Lua::ajaxmessage('success', '操作成功', './channel.htm');
     }
     
@@ -57,11 +58,13 @@ class __channel extends __auth{
      * 保存编辑
      */
     private function save_edit(){
+        $id = Lua::get('id');
         $sqlarr = $this->_check(0);
         $where  = array(
-            'id' => Lua::get('id')
+            'id' => $id
         );
         Lua::update('lua_channel', $sqlarr, $where);
+        Lua::write_log($this->user, '修改频道', "id=$id<br />title=".$sqlarr['name'], SYSNAME);
         Lua::ajaxmessage('success', '操作成功', './channel.htm');
     }
     
@@ -80,10 +83,6 @@ class __channel extends __auth{
         $groupname = Lua::post('groupname');
         if (empty($groupname)){
             Lua::ajaxmessage('error', '频道管理组');
-        }
-        $classname = Lua::post('classname');
-        if (empty($classname)){
-            Lua::ajaxmessage('error', 'CSS样式名称');
         }
         if ($mkdir == 1){
             // 创建子系统
@@ -162,6 +161,7 @@ class home extends auth{
             mkdir($__Path.'static/');
             mkdir($__Path.'static/img/');
             copy(LUA_ROOT.ADMIN_ROOT.'/static/img/water.png', $__Path.'static/img/water.png');
+            copy(LUA_ROOT.ADMIN_ROOT.'/icon.png',$__Path.'icon.png');
             $__htaccess = '
 RewriteEngine On
 
@@ -181,7 +181,6 @@ require_once "../@Doo/Lua.php";
             file_put_contents($__Path.'index.php', $__index);
         }
         return array(
-            'classname' => $classname,
             'domain' => Lua::post('domain'),
             'groupname' => $groupname,
             'name' => $name,
@@ -193,7 +192,10 @@ require_once "../@Doo/Lua.php";
      * 删除整个频道
      */
     private function del(){
-        Lua::delete('lua_channel', array('id'=>Lua::get('id')));
+        $id = Lua::get('id');
+        $db = Lua::get_one("select name from lua_channel where id='$id'");
+        Lua::delete('lua_channel', array('id'=>$id));
+        Lua::write_log($this->user, '删除频道', "id=$id<br />title=".$db['name'], SYSNAME);
         Lua::admin_msg('提示信息', '操作成功', './channel.htm');
     }
     

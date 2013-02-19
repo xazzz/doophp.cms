@@ -11,6 +11,15 @@
 <table cellpadding="2" cellspacing="1" class="table">
 	<!--{if $action == 'save_add'}-->
 	<tr> 
+		<td class="text"><font class="must">*</font>所属频道：</td>
+		<td colspan="2" class="input">
+		<select name="cid">
+			<!--{loop $channels $v}-->
+			<option value="$v[id]">$v[name]</option>
+			<!--{/loop}-->
+		</select></td>
+	</tr>
+	<tr> 
 		<td class="text"><font class="must">*</font>模型类别：</td>
 		<td colspan="2" class="input">
 		<select name="mtype">

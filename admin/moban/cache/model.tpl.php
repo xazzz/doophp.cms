@@ -6,7 +6,8 @@
 
 <div class="stat_list" style="padding-left:24px;margin:0px;">
 	<ul>
-		<li class="<? if(empty($mtype)) { ?>now<? } ?>"><a href="./model.htm">已安装模型</a></li><? if(is_array($this->mtype)) { foreach($this->mtype as $k => $v) { ?><li class="<? if($k==$mtype) { ?>now<? } ?>"><a href="./model.htm?mtype=<?=$k?>"><?php echo isset($v) ? $v : "";?>模型</a></li><? } } ?><li><a href="./model.htm?action=market">模型市场</a></li>
+		<li class="<? if(empty($action)) { ?>now<? } ?>"><a href="./model.htm">已安装模型</a></li><? if(is_array($channels)) { foreach($channels as $v) { ?>		<li class="<? if($cid && $v['id']==$cid) { ?>now<? } ?>"><a href="./model.htm?cid=<?=$v['id']?>"><?=$v['name']?></a></li>
+		<? } } ?><li><a href="./model.htm?action=market">模型市场</a></li>
 	</ul>
 </div>
 <div style="clear:both;"></div>
@@ -14,15 +15,18 @@
 <table cellpadding="2" cellspacing="1" class="table">
 	<tr>
 		<td class="centle" colspan="8" style=" height:20px; line-height:30px; font-weight:normal; padding-left:10px;">
-			<div style="float:left;"><a href="./model.htm?action=add">+我要自己动手创造一款新的模型</a></div>
+			<div style="float:left;">
+				分类：&nbsp;&nbsp;<? if(is_array($this->mtype)) { foreach($this->mtype as $k => $v) { ?><a href="./model.htm?mtype=<?=$k?><? if($cid) { ?>&amp;cid=<?=$cid?><? } ?>" style="<? if(isset($mtype) && $k==$mtype) { ?>color:red;<? } ?>"><?php echo isset($v) ? $v : "";?>模型</a>&nbsp;&nbsp;<? } } ?>//&nbsp;
+				<a href="./model.htm?action=add">+ 我要自己动手创造一款新的模型</a>&nbsp;&nbsp;
+			</div>
 		</td>
 	</tr>
 	<tr>
 		<td width="40" class="list">ID</td>
 		<td class="list">模型名称(前缀)</td>
 		<td class="list">创建日期</td>
+		<td class="list">频道</td>
 		<td class="list">开发者</td>
-		<td class="list">QQ</td>
 		<td width="60" class="list">数据表</td>
 		<td width="60" class="list">可用</td>
 		<td width="180" class="list">操作</td>
