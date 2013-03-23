@@ -8,7 +8,10 @@
 <table cellpadding="0" cellspacing="0" class="table">
 	<tr>
 		<td class="centle" height="20" colspan="9" style="font-weight:normal;">
-			<div style="float:left;">&nbsp;&nbsp;<a href="./channel.htm?action=add">+添加频道</a></div>
+			<div style="float:left;">
+				&nbsp;&nbsp;<a href="./channel.htm?action=add">+添加频道</a>
+				&nbsp;&nbsp;<a href="./channel.htm?action=scan">导入频道</a>
+			</div>
 		</td>
 	</tr>
 	<tr>
@@ -19,7 +22,7 @@
 		<td class="list" >创建时间</td>
 		<td class="list">绑定域名</td>
 		<td width="40" class="list" style="padding:0px; text-align:center;">状态</td>
-		<td width="100" class="list" >操作</td>
+		<td width="120" class="list" >操作</td>
 	</tr>
 	<!--{loop $list $v}-->
 	<tr class="mouse click">
@@ -30,8 +33,7 @@
 		<td class="list-text">{echo date('Y-m-d H:i:s',$v['createtime']);}</td>
 		<td class="list-text">$v[domain]</td>
 		<td class="list-text"><a href="javascript:;" onclick="__set($v[id]);" title="点击更改频道状态"><!--{if $v['status'] == 1}-->可用<!--{else}--><font color="red">禁用</font><!--{/if}--></a></td>
-		<td class="list-text">$v[classname]</td>
-		<td class="list-text"><a href="./channel.htm?action=edit&id=$v[id]">编辑</a>&nbsp;&nbsp;<a href="./channel.htm?action=del&id=$v[id]" onclick="return confirm('确认要删除此频道吗?');">删除</a>&nbsp;&nbsp;<a href="javascript:;" onclick="__def($v[id]);" title="设为默认显示"><!--{if $v['isdefault'] == 0}-->默认<!--{else}--><font color="red">取消</font><!--{/if}--></a></td>
+		<td class="list-text"><a href="./channel.htm?action=edit&id=$v[id]">编辑</a>&nbsp;&nbsp;<a href="./channel.htm?action=del&id=$v[id]" onclick="return confirm('确认要删除此频道吗?');">删除</a>&nbsp;&nbsp;<a href="javascript:;" onclick="__def($v[id]);" title="设为默认显示"><!--{if $v['isdefault'] == 0}-->默认<!--{else}--><font color="red">取消</font><!--{/if}--></a>&nbsp;&nbsp;<a href="./channel.htm?action=export&id=$v[id]">导出</a></td>
 	</tr>
 	<!--{/loop}-->
 </table>

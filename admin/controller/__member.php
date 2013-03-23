@@ -13,7 +13,7 @@ class __member extends __auth{
         $action = $action ? $action : 'home';
         $rs = $this->acl()->process($this->user['perm'], '__member', $action);
         if ($rs){
-            return $rs;            
+            return $rs;
         }
         if (method_exists($this, $action)){
             $this->$action();
@@ -181,7 +181,7 @@ class __member extends __auth{
             'name' => $name,
             'systemname' => SYSNAME
         );
-        Lua::insert('lua_member_model_group', $sqlarr);
+        $id = Lua::insert('lua_member_model_group', $sqlarr);
         Lua::write_log($this->user, '增加会员用户组', "model_id=".Lua::get('model_id')."<br />id=$id<br />title=$name", SYSNAME);
         Lua::ajaxmessage('success', '操作成功', "./member.htm?action=model_group&id=".Lua::get('model_id'));
     }
@@ -260,15 +260,20 @@ class __member extends __auth{
         $txt = Lua::get('txt');
         $and = "";
         if ($txt){
-            $and = " where username like binary '%$txt%' ";
+            $and = " where u.username like binary '%$txt%' ";
             $url = "./member.htm?action=user&id=$id&txt=$txt";
         }
         $show = Lua::get_more("select name,fieldname from lua_member_model_field where systemname='".SYSNAME."' and model_id='$id' and status='1' order by vieworder asc,id desc");
-        $count = Doo::db()->count("select count(*) from ".$db['tablename']." $and");
+        $count = Doo::db()->count("select count(*) from ".$db['tablename']." v left join lua_member u on u.uid=v.vuid $and");
         $tpp = 20;
         $limit = (($this->page - 1) * $tpp).','.$tpp;
-        $list = Lua::get_more("select * from ".$db['tablename']." $and order by uid desc limit ".$limit);
+        $list = Lua::get_more("select v.*,u.* from ".$db['tablename']." v left join lua_member u on u.uid=v.vuid $and order by u.uid desc limit ".$limit);
         $page = Lua::page($url, $this->page, $count, $tpp);
+        $groups = Lua::get_more("select * from lua_member_model_group where systemname='".SYSNAME."' and model_id='$id' order by vieworder asc,id desc");
+        $gps = array();
+        foreach ($groups as $v){
+            $gps[$v['id']] = $v['name'];
+        }
         include Lua::display('member_user', $this->dir);
     }
     
@@ -279,8 +284,8 @@ class __member extends __auth{
         $mid = Lua::get('mid');
         $mdb = $this->_model($mid);
         $uid = Lua::get('uid');
-        $db = Lua::get_one("select username from ".$mdb['tablename']." where uid='$uid'");
-        Lua::delete($mdb['tablename'], array('uid'=>$uid));
+        $db = Lua::get_one("select username from lua_member where uid='$uid'");
+        Lua::delete($mdb['tablename'], array('vuid'=>$uid));
         Lua::write_log($this->user, '删除模型会员', "model_id=$mid<br />uid=$uid<br />title=".$db['username'], SYSNAME);
         Lua::admin_msg('提示信息', '成功删除', "./member.htm?action=user&id=$mid");
     }
@@ -312,13 +317,32 @@ class __member extends __auth{
     }
     
     /*
+     * 检查uid是否已激活
+     */
+    private function __check_uid(){
+        $uid = intval(Lua::post('uid'));
+        $db = Lua::get_one("select username from lua_member where uid='$uid'");
+        if (empty($db)){
+            Lua::println('<font color="red">用户不存在</font>');
+        }
+        $mid = intval(Lua::post('mid'));
+        $mdb = $this->_model($mid);
+        $count = Doo::db()->count("select count(*) from ".$mdb['tablename']." where vuid='$uid' and vmid='$mid'");
+        if ($count == 0){
+            echo $db['username']." -- <font color='green'>可使用</font>";
+        }else{
+            echo $db['username']." -- <font color='green'>已存在</font>";
+        }
+    }
+    
+    /*
      * 编辑会员模型里的会员
      */
     private function user_edit(){
         $model_id = Lua::get('model_id');
         $model_db = $this->_model($model_id);
         $uid = Lua::get('uid');
-        $db = Lua::get_one("select * from ".$model_db['tablename']." where uid='$uid'");
+        $db = Lua::get_one("select * from ".$model_db['tablename']." where vuid='$uid'");
         $action = "save_user_edit&model_id=$model_id&uid=$uid";
         $groups = Lua::get_more("select * from lua_member_model_group where systemname='".SYSNAME."' and model_id='$model_id' order by vieworder asc,id desc");
         $list = Lua::get_more("select * from lua_member_model_field where systemname='".SYSNAME."' and model_id='$model_id' order by vieworder asc,id desc");
@@ -330,16 +354,8 @@ class __member extends __auth{
      */
     private function save_user_edit(){
         $sqlarr = array();
-        $password = Lua::post('password');
-        if ($password){
-            if ($password != Lua::post('confirm_password')){
-                Lua::ajaxmessage('error', '二次密码不相同');
-            }
-            $sqlarr['password'] = md5($password);
-        }
         $sqlarr = array(
-            'email' => Lua::post('email'),
-            'gid' => Lua::post('gid')
+            'vgid' => Lua::post('gid')
         );
         $model_id = Lua::get('model_id');
         $model_db = $this->_model($model_id, 1);
@@ -367,8 +383,8 @@ class __member extends __auth{
         }
         $sqlarr = array_merge_recursive($sqlarr, $custom);
         $uid = Lua::get('uid');
-        $udb = Lua::get_one("select username from ".$model_db['tablename']." where uid='$uid'");
-        Lua::update($model_db['tablename'], $sqlarr, array('uid'=>$uid));
+        $udb = Lua::get_one("select username from lua_member where uid='$uid'");
+        Lua::update($model_db['tablename'], $sqlarr, array('vuid'=>$uid));
         Lua::write_log($this->user, '修改模型会员', "model_id=$model_id<br />uid=$uid<br />title=".$udb['username'], SYSNAME);
         Lua::ajaxmessage('success', '操作成功', "./member.htm?action=user&id=$model_id");
     }
@@ -377,24 +393,18 @@ class __member extends __auth{
      * 保存会员模型里添加会员
      */
     private function save_user(){
-        $username = Lua::post('username');
-        if (empty($username)){
-            Lua::ajaxmessage('error', '用户名');
+        $vmid = intval(Lua::post('vmid'));
+        $vuid = intval(Lua::post('vuid'));
+        $vmdb = $this->_model($vmid, 1);
+        $count = Doo::db()->count("select count(*) from ".$vmdb['tablename']." where vuid='$vuid' and vmid='$vmid'");
+        if ($count){
+            Lua::ajaxmessage('error', '此用户已存在');
         }
-        $password = Lua::post('password');
-        if (empty($password)){
-            Lua::ajaxmessage('error', '登录密码');
+        $vudb = Lua::get_one("select * from lua_member where uid='$vuid'");
+        if (empty($vudb)){
+            Lua::ajaxmessage('error', '此用户不存在');
         }
-        if ($password != Lua::post('confirm_password')){
-            Lua::ajaxmessage('error', '二次密码不相同');
-        }
-        $model_id = Lua::get('model_id');
-        $model_db = $this->_model($model_id, 1);
-        $count = Doo::db()->count("select count(*) from ".$model_db['tablename']." where username='$username'");
-        if ($count > 0){
-            Lua::ajaxmessage('error', '此用户名已存在');
-        }
-        $list = Lua::get_more("select * from lua_member_model_field where systemname='".SYSNAME."' and model_id='$model_id' order by vieworder asc,id desc");
+        $list = Lua::get_more("select * from lua_member_model_field where systemname='".SYSNAME."' and model_id='$vmid' order by vieworder asc,id desc");
         $custom = array();
         if ($list){
             foreach ($list as $rs){
@@ -417,21 +427,15 @@ class __member extends __auth{
             }
         }
         $sqlarr = array(
-            'username' => $username,
-            'regtime' => time(),
-            'regip' => $this->clientIP(),
-            'status' => 1,
-            'logs' => 0,
-            'lasttime' => time(),
-            'password' => md5($password),
-            'lastip' => $this->clientIP(),
-            'email' => Lua::post('email'),
-            'gid' => Lua::post('gid')
+            'vuid' => $vuid,
+            'vgid' => Lua::post('gid'),
+            'vmid' => $vmid,
+            'vcredit' => 0
         );
         $sqlarr = array_merge_recursive($sqlarr, $custom);
-        $lastid = Lua::insert($model_db['tablename'], $sqlarr);
-        Lua::write_log($this->user, '增加模型会员', "model_id=$model_id<br />uid=$lastid<br />title=$username", SYSNAME);
-        Lua::ajaxmessage('success', '操作成功', "./member.htm?action=user&id=$model_id");
+        $lastid = Lua::insert($vmdb['tablename'], $sqlarr);
+        Lua::write_log($this->user, '增加模型会员', "model_id=$vmid<br />uid=$lastid<br />title=".$vudb['username'], SYSNAME);
+        Lua::ajaxmessage('success', '操作成功', "./member.htm?action=user&id=$vmid");
     }
     
     /*
@@ -458,7 +462,7 @@ class __member extends __auth{
         }
         $id = Lua::get('id');
         $db = $this->_model($id, 1);
-        $this->_check($fieldname, $db['tablename']);
+        $this->_check($fieldname);
         $sqlarr = array(
             'fieldname' => $fieldname,
             'fieldtype' => Lua::post('fieldtype'),
@@ -527,9 +531,9 @@ class __member extends __auth{
     /*
      * 检查字段是否存在
      */
-    private function _check($fieldname, $tablename){
+    private function _check($fieldname){
         $exist = array();
-        $fields = Doo::db()->fetchAll("SHOW FULL COLUMNS FROM $tablename");
+        $fields = Doo::db()->fetchAll("SHOW FULL COLUMNS FROM lua_member");
         foreach ($fields as $field){
             $exist[] = $field['Field'];
         }
@@ -572,7 +576,7 @@ class __member extends __auth{
         if (empty($tablename)){
             Lua::ajaxmessage('error', '数据表名');
         }
-        $tablename = 'lua_member_'.SYSNAME.'_'.$tablename;
+        $tablename = 'doo_member_'.SYSNAME.'_'.$tablename;
         $sqlarr = array(
             'createtime' => time(),
             'modelname' => $modelname,
@@ -580,12 +584,8 @@ class __member extends __auth{
             'tablename' => $tablename,
             'systemname' => SYSNAME
         );
-        Lua::insert('lua_member_model', $sqlarr);
-        $default_create_table = Doo::db()->fetchRow("SHOW CREATE TABLE `lua_member`");
-        $default_create_table = $default_create_table['Create Table'];
-        $default_create_table = str_replace('lua_member', $tablename, $default_create_table);
-        Doo::db()->query($default_create_table);
-        Doo::db()->query("TRUNCATE TABLE `".$tablename."`");
+        $mid = Lua::insert('lua_member_model', $sqlarr);// 用户组ID, 会员模型ID, 积分值
+        Doo::db()->query("CREATE TABLE `".$tablename."` (`vuid` int(10) NOT NULL,`vgid` tinyint(3),`vmid` int(10) NOT NULL,`vcredit` int(10) NOT NULL, PRIMARY KEY (`vuid`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
         Lua::write_log($this->user, '增加会员模型', "model_id=$mid<br />table=$tablename<br />modelname=$modelname", SYSNAME);
         Lua::ajaxmessage('success', '操作成功', './member.htm?action=model');
     }

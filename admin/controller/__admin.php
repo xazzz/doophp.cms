@@ -21,6 +21,83 @@ class __admin extends __auth{
     }
     
     /*
+     * 登录设置
+     */
+    private function loginset(){
+        $data = Doo::cache('php')->get('loginset');
+        $post = Lua::post('post');
+        if ($post){
+            Doo::cache('php')->set('loginset',$post);
+            Lua::ajaxmessage('success', '操作成功', './admin.htm?action=loginset');
+        }
+        include Lua::display('admin_loginset', $this->dir);
+    }
+    
+    /*
+     * 清除口令卡
+     */
+    private function clear(){
+        $uid = intval(Lua::get('uid'));
+        Lua::update('lua_admin', array('secureid'=>0), array('uid'=>$uid));
+        Lua::admin_msg('信息提示', '已清除', './admin.htm');
+    }
+    
+    /*
+     * 生成口令卡
+     */
+    private function makecard(){
+        header("Content-Disposition: attachment; filename=card.png");
+        header("Content-type: image/png");
+        $uid = intval(Lua::get('uid'));
+        $x = array('A','B','C','D','E','F','G','H','I','J');
+        $image = imagecreatefromjpeg(LUA_ROOT.ADMIN_ROOT.'/static/img/table.jpg');
+        imagecolorallocate($image, 255,255,255);
+        $black = imagecolorallocate($image, 0, 0, 0);
+        $y = array();
+        $_line = 9;
+        $_column = 10;
+        for ($i = 1; $i <= $_line; $i++) {
+            for ($h = 1; $h <= $_column; $h++)  {
+                $num = mt_rand(100,999);
+                $y[$i][] = $num;
+            }
+        }
+        $X_START = 33;
+        $Y_START = 93;
+        $ITERATIVE = 36;
+        $xStart = $X_START;
+        $yStart = $Y_START;
+        foreach ($x as $column) {
+            imagestring($image, 9, $xStart + 10, $Y_START - 30, $column, $black);
+            $xStart += $ITERATIVE;
+        }
+        $xStart = $X_START;
+        for ($i = 1; $i <= 9; $i++) {
+            imagestring($image, 9, $xStart - 25, $yStart, $i, $black);
+            $yStart += $ITERATIVE;
+        }
+        $yStart = $Y_START;
+        foreach ($y as $key => $line) {
+            foreach ($line as $key => $column) {
+                imagestring($image, 9, $xStart, $yStart, $column, $black);
+                $xStart += $ITERATIVE;
+            }
+            $yStart += $ITERATIVE;
+            $xStart = $X_START;
+        }
+        imagepng($image);
+        imagedestroy($image);
+        $securekey = serialize($y);
+        $sqlarr = array(
+            'uid' => $uid,
+            'securekey' => $securekey
+        );
+        Lua::delete('lua_secure', array('uid'=>$uid));
+        $sid = Lua::insert('lua_secure', $sqlarr);
+        Lua::update('lua_admin', array('secureid'=>$sid), array('uid'=>$uid));
+    }
+    
+    /*
      * 栏目权限设置
      */
     private function perm_category(){

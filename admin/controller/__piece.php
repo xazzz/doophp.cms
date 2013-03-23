@@ -152,7 +152,8 @@ class __piece extends __auth{
      * 模型列表
      */
     private function _models(){
-        $list = Lua::get_more("select * from lua_model where status='1' and mtype='2' order by id asc");
+        $cn = Lua::get_one("select id from lua_channel where path='".SYSNAME."'");
+        $list = Lua::get_more("select * from lua_model where status='1' and mtype='2' and cid='".$cn['id']."' order by id asc");
         $oute = array();
         if ($list){
             foreach ($list as $v){

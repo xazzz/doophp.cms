@@ -18,6 +18,7 @@ CREATE TABLE `lua_admin` (
   `channel` char(20) NOT NULL,
   `category_can` text NOT NULL,
   `piece_can` text NOT NULL,
+  `secureid` int(10) NOT NULL,
   PRIMARY KEY (`uid`),
   KEY `uid` (`uid`)
 ) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
@@ -25,7 +26,23 @@ CREATE TABLE `lua_admin` (
 -- ----------------------------
 -- Records of lua_admin
 -- ----------------------------
-INSERT INTO `lua_admin` VALUES ('1', 'admin', '1359724946', '1', '21232f297a57a5a743894a0e4a801fc3', 'admin', '1', '127.0.0.1', 'admin', '', '');
+INSERT INTO `lua_admin` VALUES ('1', 'admin', '1359724946', '1', '21232f297a57a5a743894a0e4a801fc3', 'admin', '1', '127.0.0.1', 'admin', '', '','0');
+
+-- ----------------------------
+-- Table structure for `lua_admin_fails`
+-- ----------------------------
+DROP TABLE IF EXISTS `lua_admin_fails`;
+CREATE TABLE `lua_admin_fails` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `ip` char(20) NOT NULL,
+  `dateline` int(10) NOT NULL,
+  `nums` tinyint(3) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of lua_admin_fails
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `lua_category`
@@ -71,6 +88,46 @@ CREATE TABLE `lua_channel` (
 
 -- ----------------------------
 -- Records of lua_channel
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `lua_files`
+-- ----------------------------
+DROP TABLE IF EXISTS `lua_files`;
+CREATE TABLE `lua_files` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `hash` char(20) NOT NULL,
+  `filename` char(100) NOT NULL,
+  `dateline` int(10) NOT NULL,
+  `used` tinyint(1) NOT NULL,
+  `systemname` char(20) NOT NULL,
+  `uid` int(10) NOT NULL,
+  `username` char(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of lua_files
+-- ----------------------------
+
+-- ----------------------------
+-- Table structure for `lua_logs`
+-- ----------------------------
+DROP TABLE IF EXISTS `lua_logs`;
+CREATE TABLE `lua_logs` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `uid` int(10) NOT NULL,
+  `username` char(40) NOT NULL,
+  `ip` char(20) NOT NULL,
+  `dateline` datetime NOT NULL,
+  `actionname` char(20) NOT NULL,
+  `content` char(200) NOT NULL,
+  `path` char(10) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of lua_logs
 -- ----------------------------
 
 -- ----------------------------
@@ -260,21 +317,16 @@ CREATE TABLE `lua_piece` (
 -- ----------------------------
 
 -- ----------------------------
--- Table structure for `lua_logs`
+-- Table structure for `lua_secure`
 -- ----------------------------
-DROP TABLE IF EXISTS `lua_logs`;
-CREATE TABLE `lua_logs` (
+DROP TABLE IF EXISTS `lua_secure`;
+CREATE TABLE `lua_secure` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `uid` int(10) NOT NULL,
-  `username` char(40) NOT NULL,
-  `ip` char(20) NOT NULL,
-  `dateline` datetime NOT NULL,
-  `actionname` char(20) NOT NULL,
-  `content` char(200) NOT NULL,
-  `path` char(10) NOT NULL,
+  `securekey` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- ----------------------------
--- Records of lua_logs
+-- Records of lua_secure
 -- ----------------------------

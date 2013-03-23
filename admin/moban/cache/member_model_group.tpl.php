@@ -1,6 +1,6 @@
 <? if(!defined('LUA_ROOT')) exit('Access Denied'); include Lua::display('_head',$this->dir); ?>
 <div class="luatop">
-	<div class="position">Lua：CMS  > <a href="./member.htm?action=model">会员模型</a> > <a href="./member.htm?action=user&amp;id=<?=$id?>"><?=$db['modelname']?></a> > 用户组管理</div>
+	<div class="position">Doo：CMS  > <a href="./member.htm?action=model">会员模型</a> > <a href="./member.htm?action=user&amp;id=<?=$id?>"><?=$db['modelname']?></a> > 用户组管理</div>
 </div>
 <div class="clear"></div>
 

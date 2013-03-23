@@ -1,6 +1,6 @@
 <? if(!defined('LUA_ROOT')) exit('Access Denied'); include Lua::display('_head',$this->dir); ?>
 <div class="luatop">
-	<div class="position">Lua：CMS  > <a href="./member.htm">会员管理</a> > <? if($db['uid']) { ?>编辑<? } else { ?>添加<? } ?>会员</div>
+	<div class="position">Doo：CMS  > <a href="./member.htm">会员管理</a> > <? if($db['uid']) { ?>编辑<? } else { ?>添加<? } ?>会员</div>
 </div>
 <div class="clear"></div>
 

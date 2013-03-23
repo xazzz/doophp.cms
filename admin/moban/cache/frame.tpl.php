@@ -56,22 +56,35 @@
 					<div class="fast">
 						<a target="_blank" href="<? if(SYSNAME == ADMIN_ROOT) { ?>/<? } else { ?>/<?=SYSNAME?>/<? } ?>" title="网站首页">网站首页</a>
 						<span></span>
+						<? if(SYSNAME == ADMIN_ROOT) { ?>
 						<a href="./" title="后台首页" target="_top">后台首页</a>
+						<? } else { ?>
+						<a href="./?set=change" title="<? if($set_id == 0) { ?>系统管理<? } else { ?>栏目信息<? } ?>" target="_top"><? if($set_id == 0) { ?>系统管理<? } else { ?>栏目信息<? } ?></a>
+						<? } ?>
 					</div>
-					<div class="nav_list" id="leftnav">
+					<div class="<?=$cssname?>" id="leftnav">
 						<ul>
-							<li><a href="./info.htm" target="main" class="on">系统信息</a></li>
 							<? if(SYSNAME == ADMIN_ROOT) { ?>
+							<li><a href="./info.htm" target="main" class="on">系统信息</a></li>
 							<li><a href="./admin.htm" target="main">管理员管理</a></li>
 							<li><a href="./channel.htm" target="main">频道管理</a></li>
 							<li><a href="./model.htm" target="main">模型管理</a></li>
 							<li><a href="./plugin.htm" target="main">插件管理</a></li>
 							<li><a href="./log.htm" target="main">日志管理</a></li>
 							<? } else { ?>
-							<li><a href="./member.htm" target="main">会员管理</a></li>
-							<li><a href="./category.htm" target="main">栏目管理</a></li>
-							<li><a href="./piece.htm" target="main">碎片管理</a></li>
-							<li><a href="./plugin.htm" target="main">插件管理</a></li>
+								<? if($set_id == 1) { ?>
+								<li><a href="./info.htm" target="main" class="on">后台首页</a></li>
+								<li><a href="./member.htm" target="main">会员管理</a></li>
+								<li><a href="./category.htm" target="main">栏目管理</a></li>
+								<li><a href="./piece.htm" target="main">碎片管理</a></li>
+								<li><a href="./plugin.htm" target="main">插件管理</a></li>
+								<? } else { ?>
+								<? if($tree) { ?>
+									<?=$html?>
+								<? } else { ?>
+								<li><a href="./category.htm?action=add" target="main">添加栏目</a></li>
+								<? } ?>
+								<? } ?>
 							<? } ?>
 						</ul>
 					</div>
@@ -101,6 +114,7 @@
 				nav.removeClass('on');
 				self.addClass('on');
 			});
+			setInterval("dheight()",1000);
 		});
 	</script>
 </body>

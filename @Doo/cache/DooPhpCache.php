@@ -45,18 +45,31 @@ class DooPhpCache {
      * @param string $id A unique key identifying the cache
      * @return mixed The value stored in cache. Return null if no cache found or already expired.
      */
-    public function get($id) {
+    public function get($id, $cachetime = 0) {
         if($this->hashing===true)
             $cfile = $this->_directory . md5($id) . '.php';
         else
             $cfile = $this->_directory . $id . '.php';
 
         if (file_exists($cfile)){
-            include $cfile ;
-            if(time() < $data[0]){
-                return $data[1];
+            if ($cachetime == 0){
+                include $cfile ;
+                if(time() < $data[0]){
+                    return $data[1];
+                }else{
+                    unlink($cfile);
+                }
             }else{
-                unlink($cfile);
+                if ($cachetime && file_exists($cfile) && time() - $cachetime < filemtime($cfile)){
+                    include $cfile ;
+                    if(time() < $data[0]){
+                        return $data[1];
+                    }else{
+                        unlink($cfile);
+                    }
+                }else{
+                    return '';
+                }
             }
         }
     }

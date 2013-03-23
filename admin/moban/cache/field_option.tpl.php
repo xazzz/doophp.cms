@@ -1,6 +1,6 @@
 <? if(!defined('LUA_ROOT')) exit('Access Denied'); include Lua::display('_head',$this->dir); ?>
 <div class="luatop">
-	<div class="position">Lua：CMS  > <a href="./model.htm">模型管理</a> > <a href="./model.htm?action=table&amp;id=<?=$model_id?>"><?=$mdb['modelname']?></a> > <a href="./model.htm?action=field&amp;model_id=<?=$model_id?>&amp;id=<?=$table_id?>">【<?php echo isset($tdb['modelname']) ? $tdb['modelname'] : "";?>】字段列表</a> > 设置选项 ( <font color="red"><?=$db['name']?></font> )</div>
+	<div class="position">Doo：CMS  > <a href="./model.htm">模型管理</a> > <a href="./model.htm?action=table&amp;id=<?=$model_id?>"><?=$mdb['modelname']?></a> > <a href="./model.htm?action=field&amp;model_id=<?=$model_id?>&amp;id=<?=$table_id?>">【<?php echo isset($tdb['modelname']) ? $tdb['modelname'] : "";?>】字段列表</a> > 设置选项 ( <font color="red"><?=$db['name']?></font> )</div>
 </div>
 <div class="clear"></div>
 

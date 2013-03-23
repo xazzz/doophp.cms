@@ -1,6 +1,6 @@
 <? if(!defined('LUA_ROOT')) exit('Access Denied'); include Lua::display('_head',$this->dir); ?>
 <div class="luatop">
-	<div class="position">Lua：CMS  > <? if($this->lua == 'piece') { ?><a href="./piece.htm">碎片管理</a><? } else { ?><a href="./category.htm">栏目管理</a><? } ?> > <a href="./content.htm?catid=<?php echo isset($catid) ? $catid : "";?><? echo $this->lua_url;; ?>"><? echo $this->cate_db['name'];; ?></a> <? if($rs) { ?><font color="blue"><u><?=$rs['subject']?></u></font> > <? } ?></div>
+	<div class="position">Doo：CMS  > <? if($this->lua == 'piece') { ?><a href="./piece.htm">碎片管理</a><? } else { ?><a href="./category.htm">栏目管理</a><? } ?> > <a href="./content.htm?catid=<?php echo isset($catid) ? $catid : "";?><? echo $this->lua_url;; ?>"><? echo $this->cate_db['name'];; ?></a> <? if($rs) { ?><font color="blue"><u><?=$rs['subject']?></u></font> > <? } ?></div>
 </div>
 <div class="clear"></div>
 
@@ -15,6 +15,7 @@
 
 <form method="post" id="myform" onsubmit="return false;">
 <input type="hidden" name="catid" value="<?=$catid?>" />
+<input type="hidden" name="hash" value="<?=$hash?>" id="hash"/>
 <table cellpadding="2" cellspacing="1" class="table">
 	<? if($mods) { ?>
 	<tr>
@@ -48,13 +49,18 @@
 </form>
 
 <script>
+var ue;
 $(function(){
-	$('.redactor_content').redactor({
-		imageUpload: './file.htm?action=uploadEditorImage',
-		lang: 'zh_cn',
-		fixed: true, 
-		fixedBox: true
-	});
+	if (edit == 1){
+		$('.redactor_content').redactor({
+			imageUpload: './file.htm?action=uploadEditorImage&hash=<?=$hash?>',
+			lang: 'zh_cn',
+			fixed: true, 
+			fixedBox: true
+		});
+	}else if (edit == 2){
+		ue = UE.getEditor('editor');
+	}
 });
 </script>
 <? include Lua::display('_foot',$this->dir); ?>

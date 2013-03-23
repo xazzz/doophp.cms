@@ -1,3 +1,3 @@
 <?php 
 
-$dbconfig["dev"] = array("localhost", "doophp", "root", "", "mysql", true, "collate"=>"utf8_unicode_ci", "charset"=>"utf8"); 
+$dbconfig["dev"] = array("localhost", "d20130322", "root", "", "mysql", false, "collate"=>"utf8_unicode_ci", "charset"=>"utf8"); 

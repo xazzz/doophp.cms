@@ -36,8 +36,7 @@ class ebak extends __auth{
             $zipname = $path.$dir.'.zip';
             if (!file_exists($zipname)){
                 Doo::loadClass('Zip');
-                $zip = new Zip();
-                $zip->Zip($path, $zipname);
+                new Zip($path, $zipname);
             }
             header('Content-type: application/octet-stream'); 
             header('Content-Length: ' . filesize($zipname));

@@ -1,6 +1,6 @@
 <? if(!defined('LUA_ROOT')) exit('Access Denied'); include Lua::display('_head',$this->dir); ?>
 <div class="luatop">
-	<div class="position">Lua：CMS  > <? if($this->lua == 'piece') { ?><a href="./piece.htm">碎片管理</a><? } else { ?><a href="./category.htm">栏目管理</a><? } ?> > <a href="./content.htm?catid=<?php echo isset($catid) ? $catid : "";?><? echo $this->lua_url;; ?>"><? echo $this->cate_db['name'];; ?></a> <? if($db) { ?>> <a href="./content.htm?catid=<?=$catid?>&amp;tableid=<?=$tableid?>&amp;tid=<?php echo isset($tid) ? $tid : "";?><? echo $this->lua_url;; ?>"><? echo $this->mode_db['modelname'];; ?></a> > <font color="blue"><u><?=$db['subject']?></u></font><? } ?></div>
+	<div class="position">Doo：CMS  > <? if($this->lua == 'piece') { ?><a href="./piece.htm">碎片管理</a><? } else { ?><a href="./category.htm">栏目管理</a><? } ?> > <a href="./content.htm?catid=<?php echo isset($catid) ? $catid : "";?><? echo $this->lua_url;; ?>"><? echo $this->cate_db['name'];; ?></a> <? if($db) { ?>> <a href="./content.htm?catid=<?=$catid?>&amp;tableid=<?=$tableid?>&amp;tid=<?php echo isset($tid) ? $tid : "";?><? echo $this->lua_url;; ?>"><? echo $this->mode_db['modelname'];; ?></a> > <font color="blue"><u><?=$db['subject']?></u></font><? } ?></div>
 </div>
 <div class="clear"></div>
 
@@ -10,7 +10,7 @@
 	<ul>
 		<? if($father) { ?>
 		<li><a href="./content.htm?catid=<?php echo isset($father['id']) ? $father['id'] : "";?><? echo $this->lua_url;; ?>"><?=$father['name']?> ↑</a></li>
-		<? } if(is_array($Ftree)) { foreach($Ftree as $v) { ?>			<li class="<? if($v['id']==$catid) { ?>now<? } ?>"><a href="./content.htm?catid=<?php echo isset($v['id']) ? $v['id'] : "";?><? echo $this->lua_url;; ?>"><?=$v['name']?></a></li>
+		<? } if(is_array($Ftree)) { foreach($Ftree as $v) { ?>			<li class="<? if($v['id']==$catid) { ?>now<? } ?>"><a href="./content.htm?catid=<?php echo isset($v['id']) ? $v['id'] : "";?><? echo $this->lua_url;; ?>"><?=$v['name']?><? if($v['id'] == $catid) { ?>(<?=$count?>)<? } ?></a></li>
 		<? } } if(is_array($nav)) { foreach($nav as $v) { ?>			<li class="<? if($v['id']==$tableid) { ?>now<? } ?>"><a href="./content.htm?catid=<?=$catid?>&amp;tableid=<?=$v['id']?>&amp;tid=<?php echo isset($tid) ? $tid : "";?><? echo $this->lua_url;; ?>"><?=$v['modelname']?><? if($v['id'] == $tableid) { ?> √<? } ?></a></li>
 		<? } } ?></ul>
 </div>
@@ -26,7 +26,10 @@
 				<? if($isdel == 1) { ?>
 				<a href="./content.htm?catid=<?=$catid?><?php echo isset($suffix) ? $suffix : "";?><? echo $this->lua_url;; ?>"><font color="gray">返回列表</font></a>&nbsp;&nbsp;
 				<? } else { ?>
-				<a href="./content.htm?action=recycle&amp;catid=<?=$catid?><?php echo isset($suffix) ? $suffix : "";?><? echo $this->lua_url;; ?>"><font color="gray">回收站</font></a>&nbsp;&nbsp;
+				<a href="./content.htm?action=recycle&amp;catid=<?=$catid?><?php echo isset($suffix) ? $suffix : "";?><? echo $this->lua_url;; ?>&rec=1"><font color="gray">回收站</font></a>&nbsp;&nbsp;
+				<? } ?>
+				<? if($pbu == 1) { ?>
+				<a href="./plugin.htm?action=batch&amp;catid=<?=$catid?><?php echo isset($suffix) ? $suffix : "";?>">批量上传</a>&nbsp;&nbsp;
 				<? } ?>
 			</div>
 			<div class="formright">
@@ -70,7 +73,7 @@
 		<td class="list-text"><input name="checkbox[]" type='checkbox' value="<?=$v['id']?>"/></td>
 		<td class="list-text"><?=$v['id']?></td>
 		<td class="list-text"><input type="text" value="<?=$v['vieworder']?>" name="order_new[<?php echo isset($v['id']) ? $v['id'] : "";?>]" class="text no_order" /></td>
-		<td class="list-text" style="text-align:left;">&nbsp;&nbsp;<? if($this->cate_db['add_perm'] == 0) { ?><a href="./content.htm?catid=<?php echo isset($v['catid']) ? $v['catid'] : "";?><? echo $this->lua_url;; ?>">[<? echo $catidb[$v['catid']]['name'];; ?>]</a> <? } ?><?=$v['subject']?><? if(isset($v['picurl']) && $v['picurl']) { ?>&nbsp;<font color="green">(图)</font><? } ?></td><? if(is_array($fields)) { foreach($fields as $e) { ?>		<td class="list-text"><? echo $v[$e['fieldname']];; ?></td>
+		<td class="list-text" style="text-align:left;">&nbsp;&nbsp;<? if($this->cate_db['add_perm'] == 0) { ?><a href="./content.htm?catid=<?php echo isset($v['catid']) ? $v['catid'] : "";?><? echo $this->lua_url;; ?>">[<? echo $catidb[$v['catid']]['name'];; ?>]</a> <? } ?><font color="<?=$v['color']?>"><?=$v['subject']?></font><? if(isset($v['picurl']) && $v['picurl']) { ?>&nbsp;<font color="green">(图)</font><? } ?></td><? if(is_array($fields)) { foreach($fields as $e) { ?>		<td class="list-text"><? echo $v[$e['fieldname']];; ?></td>
 		<? } } ?><td class="list-text"><? if($v['commend']) { ?><?=$v['commend']?><? } else { ?>--<? } ?></td>
 		<td class="list-text"><? if($v['topped']) { ?><?=$v['topped']?><? } else { ?>--<? } ?></td>
 		<td class="list-text"><? echo date('Y-m-d H:i',$v['dateline']);; ?></td>

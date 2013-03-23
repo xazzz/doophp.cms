@@ -1,6 +1,6 @@
 <? if(!defined('LUA_ROOT')) exit('Access Denied'); include Lua::display('_head',$this->dir); ?>
 <div class="luatop">
-	<div class="position">Lua：CMS  > <a href="./model.htm">模型管理</a> > <a href="./model.htm?action=table&amp;id=<?=$mid?>"><?=$mdb['modelname']?></a> > <? if($db['id']) { ?>修改<? } else { ?>新增<? } ?>数据表</div>
+	<div class="position">Doo：CMS  > <a href="./model.htm">模型管理</a> > <a href="./model.htm?action=table&amp;id=<?=$mid?>"><?=$mdb['modelname']?></a> > <? if($db['id']) { ?>修改<? } else { ?>新增<? } ?>数据表</div>
 </div>
 <div class="clear"></div>
 

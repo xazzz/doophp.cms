@@ -3,6 +3,78 @@
 class Lua{
     
     /*
+     * 获取静态数据缓存
+     */
+    public static function get_cache($id, $cachetime = 60){
+        if ($id){
+            Doo::cache('php')->hashing = false;
+            return Doo::cache('php')->get($id, $cachetime);
+        }
+        return array();
+    }
+    
+    /*
+     * 设置静态数据缓存
+     */
+    public static function set_cache($id, $value, $cachetime = 60){
+        Doo::cache('php')->hashing = false;
+        Doo::cache('php')->set($id, $value);
+    }
+    
+    /*
+     * 格式化时间
+     */
+    public static function format_date($time, $format = 'Y-m-d H:i'){
+        $limit = TIMESTAMP - $time;
+        if ($limit < 60){
+            return $limit.'秒钟之前';
+        }
+        if ($limit >= 60 && $limit < 3600){
+            return floor($limit/60).'分钟之前';
+        }
+        if ($limit >= 3600 && $limit < 86400){
+            return floor($limit/3600).'小时之前';
+        }
+        if ($limit >= 86400){
+            return date($format, $time);
+        }
+    }
+    
+    /*
+     * 后台登录记录失败次数
+     */
+    public static function adminfail($ip, $force = 0, $limit = 15){
+        $db = Lua::get_one("select * from lua_admin_fails where ip='$ip'");
+        if ($db && $db['nums'] == $limit){
+            $session = Doo::session('Lua');
+            $session->auth = '';
+            Lua::admin_msg('错误提示', '登录失败次数过多，已禁止此IP登录。','/'.ADMIN_ROOT.'/');
+        }
+        if ($force == 0){
+            if (empty($db)){
+                Lua::insert('lua_admin_fails', array('ip'=>$ip,'dateline'=>time(),'nums'=>1));
+            }else{
+                Doo::db()->query("update lua_admin_fails set nums=nums+1 where ip='$ip'");
+            }
+        }
+    }
+    
+    /*
+     * 随机数
+     */
+    public static function random($length, $numeric = 0) {
+        PHP_VERSION < '4.2.0' ? mt_srand((double)microtime() * 1000000) : mt_srand();
+        $seed = base_convert(md5(print_r($_SERVER, 1).microtime()), 16, $numeric ? 10 : 35);
+        $seed = $numeric ? (str_replace('0', '', $seed).'012340567890') : ($seed.'zZ'.strtoupper($seed));
+        $hash = '';
+        $max = strlen($seed) - 1;
+        for($i = 0; $i < $length; $i++) {
+                $hash .= $seed[mt_rand(0, $max)];
+        }
+        return $hash;
+    }
+    
+    /*
      * 日志操作
      */
     public static function write_log($user, $action, $content, $channel){
@@ -86,15 +158,24 @@ class Lua{
                 break;
             case 'picurl':
                 $html = "<input name='$field' type='text' class='text' value='$value' readonly style='float:left;' /><input name='upfile' type='file' id='{$field}_upload' /><script type='text/javascript'>$(document).ready(function(){upfile('#{$field}_upload','upimage','$field');});</script>";
+                if ($value){
+                    $html .= " <a href='/".SYSNAME."/$value' target='new'>查看</a>";
+                }                
                 break;
             case 'edit':
-                $html = "<textarea name='$field' style='height:460px;' class='redactor_content'>$value</textarea>";
+                $html = "<script>edit=1;</script><textarea name='$field' style='height:460px;' class='redactor_content'>$value</textarea>";
                 break;
             case 'relate':
                 $html = "<input id='so_$field' class='text' type='text' onkeyup=\"so_relate('$field',".$field_db['relate_id'].",this.value,0);\" onclick=\"so_default('$field',0);\"/><input type='hidden' name='$field' value='$value' /><div id='div_$field'></div><script>$(function(){so_value('$field',".$field_db['relate_id'].",'$value',0);});</script>";
                 break;
             case 'multi':
                 $html = "<input id='so_$field' class='text' type='text' onkeyup=\"so_relate('$field',".$field_db['relate_id'].",this.value,1);\" onclick=\"so_default('$field',1);\"/><input type='hidden' name='$field' value='$value' /><input type='hidden' id='model_$field' value='".$field_db['relate_id']."' /><div id='value_$field'></div><div id='div_$field'></div><script>$(function(){so_value('$field',".$field_db['relate_id'].",'$value',1);});</script>";
+                break;
+            case 'datetime':
+                $html = "<input name='$field' readonly type='text' class='text jsdate' value='$value'>";
+                break;
+            case 'uedit':
+                $html = "<script>edit=2;var id_name = 'ueditor_$field';</script><input name='$field' id='ueditor_$field' type='hidden' value=''/><div><script id=\"editor\" type=\"text/plain\">$value</script></div>";
                 break;
         }
         if ($father_id){
@@ -127,11 +208,15 @@ class Lua{
                 $query = "ALTER TABLE $table add $fieldname text not null";
                 break;
             case 'edit':
+            case 'uedit':
                 $query = "ALTER TABLE $table add $fieldname mediumtext not null";
                 break;
             case 'int':
             case 'relate':
                 $query = "ALTER TABLE $table add $fieldname int(10) not null";
+                break;
+            case 'datetime':
+                $query = "ALTER TABLE $table add $fieldname datetime not null";
                 break;
         }
         if ($query){
@@ -151,7 +236,9 @@ class Lua{
             'picurl'=>'图片',
             'radio'=>'单选',
             'int'=>'数字',
+            'datetime' => '时间',
             'edit'=>'默认编辑器',
+            'uedit'=>'百度编辑器',
             'relate'=>'关联单一数据',
             'multi'=>'关联多条数据'
         );
@@ -180,6 +267,31 @@ class Lua{
         }
         $html .= $page < $totalpage ? '<a href="'.$url.'p='.($page+1).'">下一页</a>':''; 
         $html .= '<a href="'.$url.'p='.$totalpage.'">末页</a>'; 
+        return $html;
+    }
+    
+    /*
+     * ajax 分页
+     */
+    public static function ajaxpage($url, $page, $count, $tpp){
+        $page = max($page, 1);
+        $totalpage = ceil($count/$tpp);
+        if ($totalpage <= 1){
+            return '';
+        }
+        $rangepage = 6;
+        $startpage = max(1,$page - $rangepage); 
+        $endpage   = min($totalpage,$startpage+$rangepage*2 - 1);
+        $startpage = min($startpage,$endpage - $rangepage*2 + 1);
+        if($startpage < 1) $startpage = 1;
+        $html = '<a href="javascript:'.$url.'1);">首页</a>';
+        $html .= $page > 1 ? '<a href="javascript:'.$url.($page-1).');">上一页</a>':''; 
+        for($i = $startpage;$i <= $endpage;$i++){ 
+            $html .= '<a href="javascript:'.$url.$i.');"'.($page == $i ? ' class="current"':'').'>'.$i.'</a>'; 
+            if($i == $totalpage) break; 
+        }
+        $html .= $page < $totalpage ? '<a href="javascript:'.$url.($page+1).');">下一页</a>':''; 
+        $html .= '<a href="javascript:'.$url.$totalpage.');">末页</a>'; 
         return $html;
     }
     
@@ -345,8 +457,8 @@ class Lua{
     /*
      * 字符串加解密
      */
-    public static function authcode($string, $operation) {
-        $key = md5('Luacms');// 为了安全请随意更改这里的值
+    public static function authcode($string, $operation, $code = 'Jack') {
+        $key = md5($code);
         $key_length = strlen($key);
         $string = $operation == 'DECODE' ? base64_decode($string) : substr(md5($string.$key), 0, 8).$string;
         $string_length = strlen($string);
@@ -439,51 +551,47 @@ class Lua{
     }
     
     /*
-     * 获取某个字段的选项
+     * 图片上传
      */
-    public static function get_option($id, $default = array()){
-        $db = Lua::get_one("select fieldoption from lua_model_field where id='$id'");
-        return array_merge($default, $db['fieldoption']);
-    }
-    
-    /*
-     * 获取下级数据
-     */
-    public static function get_sub($fatherid, $subid, $tablename, $select='*', $limit=10, $vieworder = 0){
-        $order = $vieworder == 1 ? "vieworder asc,id desc" : "id desc" ;
-        return Lua::get_more("select $select from $tablename where isdel='0' and $subid='$fatherid' order by $order limit ".$limit);
-    }
-    
-    /*
-     * 可读取任意数据表里的数据
-     */
-    public static function get_data($tablename, $select = '*', $limit = 10, $topped = 0, $commend = 0, $catid = 0, $order = 'id desc'){
-        $and = "";
-        if ($topped){
-            $and .= " and topped='$topped' ";
+    public static function upload($user, $form = 'Filedata', $thumb = array(), $waterit = 0){
+        Doo::loadHelper('DooGdImage');
+        $file_path = "files/".date('Y')."/".date('m')."/";
+        $upload_path = PROJECT_ROOT.$file_path;
+        $GD = new DooGdImage($upload_path, $upload_path);
+        if ($GD->checkImageExtension($form, array('jpg','jpeg'))){
+            $filename = $GD->uploadImage($form);
+            if ($waterit == 1){
+                list($newname,) = explode('.',$filename);
+                $water = PROJECT_ROOT.'static/img/water.png';
+                $GD->waterMarkImage($filename,$water,'right','bottom',$newname);
+            }
+            if ($thumb){
+                $width = $thumb[0];
+                $height = $thumb[1];
+                $GD->ratioResize($filename, $width, $height);
+            }
+            // insert db
+            $sqlarr = array(
+                'hash' => Lua::get_post('hash'),
+                'filename' => $file_path.$filename,
+                'dateline' => TIMESTAMP,
+                'used' => 0,
+                'systemname' => SYSNAME,
+                'uid' => $user['uid'],
+                'username' => $user['username']
+            );
+            Lua::insert('lua_files', $sqlarr);
+            return "1@".$file_path.$filename;
         }
-        if ($commend){
-            $and .= " and commend='$commend' ";
-        }
-        if ($catid){
-            $and .= " and catid in ($catid)";
-        }
-        return Lua::get_more("select $select from $tablename where isdel='0' $and order by $order limit ".$limit);
-    }
-    
-    /*
-     * 获取单页面数据
-     */
-    public static function get_single($catid, $tablename, $select = '*'){
-        return Lua::get_one("select $select from $tablename where isdel='0' and catid='$catid'");
+        return "你上传的文件非图片格式";
     }
     
     /*
      * 获取缩略图地址
      */
-    public static function get_thumb($filename){
+    public static function get_thumb($filename, $thumb = '_thumb'){
         list($name,$ext) = explode('.',$filename);
-        return $name.'_thumb.'.$ext;
+        return $name.$thumb.'.'.$ext;
     }
     
     /*

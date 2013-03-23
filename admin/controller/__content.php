@@ -46,6 +46,11 @@ class __content extends __auth{
         $Ftree = $this->_tree($this->cate_db['upid']);
         $Stree = $this->_tree($this->cate_db['id']);
         $and = "";
+        $rec = Lua::get('rec');
+        if ($rec){
+            $rec = "&rec=1";
+            $isdel = 1;
+        }
         // 下级模型数据处理
         $tableid = Lua::get('tableid');
         $tid = Lua::get('tid');
@@ -74,6 +79,9 @@ class __content extends __auth{
             $rs = Lua::get_one("select * from ".$this->mode_db['tablename']." where catid='$catid'");
             if (empty($rs)){
                 $rs = Lua::db_array($this->mode_db['tablename']);
+                $hash = FILE_HASH;
+            }else{
+                $hash = $rs['hash'];
             }
             $fields = $this->_fields($this->mode_db);
             if (empty($father_db)){
@@ -118,13 +126,19 @@ class __content extends __auth{
                 if ($catids){
                     $and .= " and catid in (".implode(',', $catids).")";
                 }
-            }            
+            }
             // end
             $count = Doo::db()->count("select count(*) from ".$this->mode_db['tablename']." where isdel='$isdel' $and");
             $tpp = 20;
             $limit = (($this->page - 1) * $tpp).','.$tpp;
             $list = Lua::get_more("select * from ".$this->mode_db['tablename']." where isdel='$isdel' $and order by vieworder asc,id desc limit ".$limit);
-            $page = Lua::page($url.$this->lua_url, $this->page, $count, $tpp);
+            $page = Lua::page($url.$this->lua_url.$rec, $this->page, $count, $tpp);
+            // 检查是否存在批量上传插件
+            $pbu = 0;
+            $plugin_batch_upload = LUA_ROOT.SYSNAME.'/plugin/batch/table/'.$tableid.'.txt';
+            if (file_exists($plugin_batch_upload)){
+                $pbu = 1;
+            }
             $same = $this->_same($this->cate_db['model_id']);
         }
         include Lua::display($tpl, $this->dir);
@@ -312,12 +326,51 @@ class __content extends __auth{
                 foreach ($value as $id){
                     $this->_table_for_del($cate_db['model_id'], $mode_db['id'], $mode_db['subid'], $id);
                 }
+                $this->_pic_del_for_hash($mode_db['tablename'], $im);
                 Doo::db()->query("delete from ".$mode_db['tablename']." where id in ($im)");
                 $this->batch_log('删除', 1);
                 Lua::ajaxmessage('success', '删除成功', "./content.htm?catid=$catid".$suffix.$this->lua_url);
             }
         }
         Lua::ajaxmessage('error', '请选择对象');
+    }
+    
+    /*
+     * 删除图片附件
+     */
+    private function _pic_del_for_hash($tablename, $id){
+        $list = Lua::get_more("select hash from $tablename where id in ($id)");
+        if ($list){
+            foreach ($list as $v){
+                $this->_pic_unlink_for_hash($v['hash']);
+            }
+        }
+    }
+    
+    /*
+     * 删除图片附件
+     */
+    private function _pic_unlink_for_hash($hash){
+        $list = Lua::get_more("select filename from lua_files where hash='$hash' and systemname='".SYSNAME."'");
+        if ($list){
+            foreach ($list as $v){
+                $file = LUA_ROOT.SYSNAME.'/'.$v['filename'];
+                if (file_exists($file)){
+                    unlink($file);
+                }
+                $thumbfile = LUA_ROOT.SYSNAME.'/'.Lua::get_thumb($v['filename']);
+                if (file_exists($thumbfile)){
+                    unlink($thumbfile);
+                }
+                for ($i = 1; $i < 6; $i++){
+                    $thumb_any = LUA_ROOT.SYSNAME.'/'.Lua::get_thumb($v['filename'], '_'.$i.'00');
+                    if (file_exists($thumb_any)){
+                        unlink($thumb_any);
+                    }
+                }
+            }
+        }
+        Doo::db()->query("delete from lua_files where hash='$hash' and systemname='".SYSNAME."'");
     }
     
     /*
@@ -333,6 +386,7 @@ class __content extends __auth{
                 Doo::db()->query("delete from $tablename where $subid='$id'");
                 if ($list){
                     foreach ($list as $r){
+                        $this->_pic_del_for_hash($tablename, $r['id']);
                         $this->_table_for_del($model_id, $v['id'], $tablesubid, $r['id']);
                     }
                 }
@@ -354,6 +408,7 @@ class __content extends __auth{
         $suffix = "";
         $father_id = "";
         $father_value = "";
+        $hash = FILE_HASH;
         if ($table_db){
             $rs = $this->_db($this->mode_db, $tid);
             $this->mode_db = $table_db;
@@ -396,6 +451,7 @@ class __content extends __auth{
         $id = Lua::get('id');
         $action = "save_edit&catid=$catid&id=$id".$suffix.$this->lua_url;
         $db = Lua::get_one("select * from ".$this->mode_db['tablename']." where id='$id'");
+        $hash = $db['hash'];
         include Lua::display('content_add', $this->dir);
     }
     
@@ -421,7 +477,9 @@ class __content extends __auth{
         if (!is_array($query)){
             Lua::ajaxmessage('error', $query);
         }
+        $query['color'] = Lua::post('color');
         Lua::update($this->mode_db['tablename'], $query, array('id'=>$id));
+        Doo::db()->query("update lua_files set used='1' where hash='".$db['hash']."'");
         Lua::write_log($this->user, '修改信息', "catid=$catid<br />id=$id<br />title=".$query['subject'], SYSNAME);
         Lua::ajaxmessage('success', '操作成功', "./content.htm?catid=$catid".$suffix.$this->lua_url);
     }
@@ -453,7 +511,9 @@ class __content extends __auth{
         $query = $this->_query($this->mode_db, $db);
         if (!is_array($query)){
             Lua::ajaxmessage('error', $query);
-        }        
+        }
+        $hash = Lua::post('hash');
+        $query['color'] = Lua::post('color');
         if ($db){
             Lua::update($this->mode_db['tablename'], $query, array('id'=>$db['id']));
             $lastid = $db['id'];
@@ -464,8 +524,10 @@ class __content extends __auth{
             $query['isdel'] = 0;
             $query['uid'] = $this->user['uid'];
             $query['username'] = $this->user['username'];
+            $query['hash'] = $hash;
             $lastid = Lua::insert($this->mode_db['tablename'], $query);
         }
+        Doo::db()->query("update lua_files set used='1' where hash='$hash'");
         Lua::write_log($this->user, '更新单页面信息', "catid=$catid<br />id=$lastid<br />title=".$query['subject'], SYSNAME);
         Lua::ajaxmessage('success', '操作成功', "./content.htm?catid=$catid".$suffix.$this->lua_url);
     }
@@ -490,13 +552,17 @@ class __content extends __auth{
         if (!is_array($query)){
             Lua::ajaxmessage('error', $query);
         }
+        $hash = Lua::post('hash');
         $query['catid'] = $catid;
         $query['dateline'] = time();
         $query['ip'] = $this->clientIP();
         $query['isdel'] = 0;
         $query['uid'] = $this->user['uid'];
         $query['username'] = $this->user['username'];
+        $query['hash'] = $hash;
+        $query['color'] = Lua::post('color');
         $id = Lua::insert($this->mode_db['tablename'], $query);
+        Doo::db()->query("update lua_files set used='1' where hash='$hash'");
         Lua::write_log($this->user, '增加信息', "catid=$catid<br />id=$id<br />title=".$query['subject'], SYSNAME);
         Lua::ajaxmessage('success', '操作成功', "./content.htm?catid=$catid".$suffix.$this->lua_url);
     }

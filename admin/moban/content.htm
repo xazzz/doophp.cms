@@ -13,7 +13,7 @@
 		<li><a href="./content.htm?catid={$father[id]}{echo $this->lua_url;}">$father[name] ↑</a></li>
 		<!--{/if}-->
 		<!--{loop $Ftree $v}-->
-			<li class="{if $v['id']==$catid}now{/if}"><a href="./content.htm?catid={$v[id]}{echo $this->lua_url;}">$v[name]</a></li>
+			<li class="{if $v['id']==$catid}now{/if}"><a href="./content.htm?catid={$v[id]}{echo $this->lua_url;}">$v[name]<!--{if $v['id'] == $catid}-->($count)<!--{/if}--></a></li>
 		<!--{/loop}-->
 		<!--{loop $nav $v}-->
 			<li class="{if $v['id']==$tableid}now{/if}"><a href="./content.htm?catid=$catid&tableid=$v[id]&tid={$tid}{echo $this->lua_url;}">$v[modelname]<!--{if $v['id'] == $tableid}--> √<!--{/if}--></a></li>
@@ -35,7 +35,10 @@
 				<!--{if $isdel == 1}-->
 				<a href="./content.htm?catid=$catid{$suffix}{echo $this->lua_url;}"><font color="gray">返回列表</font></a>&nbsp;&nbsp;
 				<!--{else}-->
-				<a href="./content.htm?action=recycle&catid=$catid{$suffix}{echo $this->lua_url;}"><font color="gray">回收站</font></a>&nbsp;&nbsp;
+				<a href="./content.htm?action=recycle&catid=$catid{$suffix}{echo $this->lua_url;}&rec=1"><font color="gray">回收站</font></a>&nbsp;&nbsp;
+				<!--{/if}-->
+				<!--{if $pbu == 1}-->
+				<a href="./plugin.htm?action=batch&catid=$catid{$suffix}">批量上传</a>&nbsp;&nbsp;
 				<!--{/if}-->
 			</div>
 			<div class="formright">
@@ -90,7 +93,7 @@
 		<td class="list-text"><input name="checkbox[]" type='checkbox' value="$v[id]"/></td>
 		<td class="list-text">$v[id]</td>
 		<td class="list-text"><input type="text" value="$v[vieworder]" name="order_new[{$v[id]}]" class="text no_order" /></td>
-		<td class="list-text" style="text-align:left;">&nbsp;&nbsp;<!--{if $this->cate_db['add_perm'] == 0}--><a href="./content.htm?catid={$v[catid]}{echo $this->lua_url;}">[<!--{echo $catidb[$v['catid']]['name'];}-->]</a> <!--{/if}-->$v[subject]<!--{if isset($v['picurl']) && $v['picurl']}-->&nbsp;<font color="green">(图)</font><!--{/if}--></td>
+		<td class="list-text" style="text-align:left;">&nbsp;&nbsp;<!--{if $this->cate_db['add_perm'] == 0}--><a href="./content.htm?catid={$v[catid]}{echo $this->lua_url;}">[<!--{echo $catidb[$v['catid']]['name'];}-->]</a> <!--{/if}--><font color="$v[color]">$v[subject]</font><!--{if isset($v['picurl']) && $v['picurl']}-->&nbsp;<font color="green">(图)</font><!--{/if}--></td>
 		<!--{loop $fields $e}-->
 		<td class="list-text"><!--{echo $v[$e['fieldname']];}--></td>
 		<!--{/loop}-->

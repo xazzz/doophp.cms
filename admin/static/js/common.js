@@ -22,11 +22,16 @@ function showmessage(type,info,url){
 * ajax post 
 */
 function post(url,formname){
+	edit = edit == null ? '' : edit;
+	if (edit == 2){
+		$('#' + id_name).val(ue.getContent());	
+	}
 	formname = formname == null ? 'myform' : formname;
 	var queryString = $('#' + formname).formSerialize();
 	$.post(url, queryString, function(data){
 		var obj = eval('(' + data + ')');
 		showmessage(obj.type, obj.info, obj.url);
+		//document.write(data);
 	});
 	return false;
 }
@@ -35,6 +40,7 @@ function post(url,formname){
 * upfile
 */
 function upfile(id, type, ureturn) {
+	var hash = $('#hash').val();
 	$(id).wrap("<div class='file_uploadfrom'></div>");
 	$(id).parent().wrap("<div class='lua_upfile'></div>");
 	$(id).parent().after("<a href='javascript:;' title='浏览上传' class='upbutn round'>浏览上传</a>");
@@ -46,7 +52,7 @@ function upfile(id, type, ureturn) {
 		'hideButton': true,
 		'auto': true,
 		'height': '25',
-		'scriptData':{action:type},
+		'scriptData':{action:type,hash:hash},
 		'onComplete': function(event, queueId, fileObj, response, data) {
 			uponComplete(response, ureturn);
 		},
@@ -133,4 +139,14 @@ function so_delete(values, id, div, model_id){
 		so_value(div, model_id, result, 1);
 		$("input[name='"+div+"']").val(result);
 	});
+}
+
+/**
+* 颜色选择
+*/
+function ColorSel(c){
+	$('#subject').css('color',c);
+	$('#color_table').hide();
+	$('#color').val(c);
+	return true;
 }

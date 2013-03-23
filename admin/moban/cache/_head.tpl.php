@@ -7,7 +7,9 @@
 <link href="<? echo $this->img; ?>css/Lua.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="<? echo $this->img; ?>swf/upfile/uploadify.css">
 <link rel="stylesheet" href="<? echo $this->img; ?>redactor/css/redactor.css" />
+<link rel="stylesheet" href="<? echo $this->img; ?>js/calendar.css" />
 <script src="<? echo $this->img; ?>js/jQuery1.7.2.js" type="text/javascript"></script>
-<script>var swfurl = "/<?=ADMIN_ROOT?>/";var phpurl = "/<?=SYSNAME?>/";</script>
+<script src="<? echo $this->img; ?>js/calendar.js" type="text/javascript"></script>
+<script>var swfurl = "/<?=ADMIN_ROOT?>/";var phpurl = "/<?=SYSNAME?>/";var edit = null;</script>
 </head>
 <body>

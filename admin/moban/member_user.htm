@@ -7,6 +7,7 @@
 
 <div class="stat_list" style="padding-left:24px;margin:0px;">
 	<ul>
+		<li><a href="./member.htm">注册会员</a></li>
 		<li class="now"><a href="./member.htm?action=user&id=$id">$db[modelname]</a></li>
 		<li><a href="./member.htm?action=model_field&id=$id">字段管理</a></li>
 		<li><a href="./member.htm?action=model_group&id=$id">用户组管理</a></li>
@@ -37,7 +38,7 @@
 		<td class="list">$v[name]</td>
 		<!--{/loop}-->
 		<td class="list">注册日期</td>
-		<td width="60" class="list">激活</td>
+		<td width="60" class="list">用户组</td>
 		<td class="list">最后登录时间</td>
 		<td width="180" class="list">操作</td>
 	</tr>
@@ -49,7 +50,7 @@
 		<td class="list-text"><!--{echo $v[$k['fieldname']];}--></td>
 		<!--{/loop}-->
 		<td class="list-text">{echo date('Y-m-d',$v['regtime']);}</td>
-		<td class="list-text"><a href="javascript:;" onclick="__set($v[uid]);" title='点击切换此用户的状态'><!--{if $v['status'] == 1}-->Y<!--{else}--><font color='red'>N</font><!--{/if}--></a></td>
+		<td class="list-text">$gps[$v[vgid]]</td>
 		<td class="list-text">{echo date('Y-m-d H:i',$v['lasttime']);}</td>
 		<td class="list-text"><a href="./member.htm?action=user_edit&model_id=$id&uid=$v[uid]">修改</a> <a href="./member.htm?action=user_del&mid=$id&uid=$v[uid]" onclick="return confirm('确认要删除此用户吗?');">删除</a></td>
 	</tr>

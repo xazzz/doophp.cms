@@ -1,7 +1,4 @@
 <? if(!defined('LUA_ROOT')) exit('Access Denied'); include Lua::display('_head',$this->dir); ?>
-<link rel="stylesheet" href="<? echo $this->img; ?>js/cal.css" />
-<script src="<? echo $this->img; ?>js/cal.js" type="text/javascript"></script>
-
 <div class="luatop">
 	<div class="position">Doo：CMS  > <a href="./log.htm">管理操作日志</a></div>
 </div>
@@ -94,8 +91,5 @@ function del(){
 		}
 	}
 }
-$(function(){
-	$('.jsdate').simpleDatepicker();
-});
 </script>
 <? include Lua::display('_foot',$this->dir); ?>

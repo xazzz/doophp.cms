@@ -343,7 +343,7 @@ class __model extends __auth{
         }
         $mid = Lua::get('mid');
         $mdb = $this->_get($mid, 1);
-        $tablename = 'lua_'.$mdb['prefix'].'_'.$tablename;
+        $tablename = 'doo_'.$mdb['prefix'].'_'.$tablename;
         $sqlarr = array(
             'createtime' => time(),
             'model_id' => $mid,
@@ -354,7 +354,7 @@ class __model extends __auth{
             'subid' => $subid
         );
         $tid = Lua::insert('lua_model_table', $sqlarr);
-        Doo::db()->query("CREATE TABLE `$tablename` (`id` int(10) unsigned NOT NULL AUTO_INCREMENT,`catid` int(10) NOT NULL,`subject` char(100) NOT NULL,`topped` tinyint(3) NOT NULL,`commend` tinyint(3) NOT NULL,`isdel` tinyint(1) NOT NULL,`vieworder` tinyint(1) NOT NULL,`dateline` int(10) NOT NULL,`ip` char(20) NOT NULL,`filename` char(20) NOT NULL,`uid` int(10) NOT NULL,`username` char(20) NOT NULL,PRIMARY KEY (`id`),KEY `id` (`id`),KEY `catid` (`catid`),KEY `topped` (`topped`),KEY `commend` (`commend`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
+        Doo::db()->query("CREATE TABLE `$tablename` (`id` int(10) unsigned NOT NULL AUTO_INCREMENT,`catid` int(10) NOT NULL,`subject` char(100) NOT NULL,`topped` tinyint(3) NOT NULL,`commend` tinyint(3) NOT NULL,`isdel` tinyint(1) NOT NULL,`vieworder` tinyint(1) NOT NULL,`dateline` int(10) NOT NULL,`ip` char(20) NOT NULL,`filename` char(20) NOT NULL,`uid` int(10) NOT NULL,`username` char(20) NOT NULL,`hash` char(20) NOT NULL,`color` char(10) NOT NULL,PRIMARY KEY (`id`),KEY `id` (`id`),KEY `catid` (`catid`),KEY `topped` (`topped`),KEY `commend` (`commend`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;");
         Doo::db()->query("update lua_model set tablenum=tablenum+1 where id='$mid'");
         Lua::write_log($this->user, '添加模型数据表', "tableid=$tid<br />model_id=$mid<br />table=$tablename", SYSNAME);
         Lua::ajaxmessage('success', '操作成功',"./model.htm?action=table&id=$mid");

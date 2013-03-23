@@ -361,13 +361,15 @@ class Doo{
      * @param string|array $class_name Name(s) of the Controller class to be imported
      * @param string $path module folder name. Default is the main app folder.
      */
-    public static function loadControllerAt($class_name, $moduleFolder=Null){
-        if($moduleFolder===null){
-            $moduleFolder = Doo::getAppPath();
-        }else{
-            $moduleFolder = Doo::getAppPath() . 'module/' . $moduleFolder;            
-        }        
-		require_once $moduleFolder . '/controller/'.$class_name.'.php';
+    public static function loadControllerAt($class_name, $moduleFolder=Null, $force = 0){
+        if ($force == 0){
+            if($moduleFolder===null){
+                $moduleFolder = Doo::getAppPath();
+            }else{
+                $moduleFolder = Doo::getAppPath() . 'module/' . $moduleFolder;            
+            } 
+        }
+        require_once $moduleFolder . '/controller/'.$class_name.'.php';
     }
 
     /**

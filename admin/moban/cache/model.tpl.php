@@ -6,7 +6,7 @@
 
 <div class="stat_list" style="padding-left:24px;margin:0px;">
 	<ul>
-		<li class="<? if(empty($action)) { ?>now<? } ?>"><a href="./model.htm">已安装模型</a></li><? if(is_array($channels)) { foreach($channels as $v) { ?>		<li class="<? if($cid && $v['id']==$cid) { ?>now<? } ?>"><a href="./model.htm?cid=<?=$v['id']?>"><?=$v['name']?></a></li>
+		<li class="<? if(empty($cid)) { ?>now<? } ?>"><a href="./model.htm">已安装模型</a></li><? if(is_array($channels)) { foreach($channels as $v) { ?>		<li class="<? if($cid && $v['id']==$cid) { ?>now<? } ?>"><a href="./model.htm?cid=<?=$v['id']?>"><?=$v['name']?></a></li>
 		<? } } ?><li><a href="./model.htm?action=market">模型市场</a></li>
 	</ul>
 </div>
@@ -25,7 +25,7 @@
 		<td width="40" class="list">ID</td>
 		<td class="list">模型名称(前缀)</td>
 		<td class="list">创建日期</td>
-		<td class="list">频道</td>
+		<td class="list">简介</td>
 		<td class="list">开发者</td>
 		<td width="60" class="list">数据表</td>
 		<td width="60" class="list">可用</td>
@@ -34,8 +34,8 @@
 		<td class="list-text"><?=$v['id']?></td>
 		<td class="list-text" style="text-align:left;">&nbsp;&nbsp;【<? echo $this->mtype[$v['mtype']];; ?>】 <?=$v['modelname']?>(<?=$v['prefix']?>)</td>
 		<td class="list-text"><? echo date('Y-m-d',$v['createtime']);; ?></td>
+		<td class="list-text"><?=$v['intro']?></td>
 		<td class="list-text"><?=$v['developer']?></td>
-		<td class="list-text"><?=$v['contact']?></td>
 		<td class="list-text"><?=$v['tablenum']?></td>
 		<td class="list-text"><a href="javascript:;" onclick="__set(<?=$v['id']?>);" title='点击切换模型的状态'><? if($v['status'] == 1) { ?>Y<? } else { ?><font color='red'>N</font><? } ?></a></td>
 		<td class="list-text"><a href="./model.htm?action=table&amp;id=<?=$v['id']?>">数据表</a> <a href="./model.htm?action=edit&amp;id=<?=$v['id']?>">修改</a> <a href="./model.htm?action=del&amp;id=<?=$v['id']?>" onclick="return confirm('确认要删除所有此模型的数据吗?');">卸载</a></td>

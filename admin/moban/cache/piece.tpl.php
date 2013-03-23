@@ -1,6 +1,6 @@
 <? if(!defined('LUA_ROOT')) exit('Access Denied'); include Lua::display('_head',$this->dir); ?>
 <div class="luatop">
-	<div class="position">Lua：CMS  > <a href="./piece.htm">碎片管理</a></div>
+	<div class="position">Doo：CMS  > <a href="./piece.htm">碎片管理</a></div>
 </div>
 <div class="clear"></div>
 
@@ -32,7 +32,8 @@
 					<td class="list" width="150" style="padding:0px; text-align:center;">所属模型</td>
 					<td width="40" class="list" style="padding:0px; text-align:center;">+内容</td>
 					<td width="60" class="list">操作</td>
-				</tr><? if(is_array($list)) { foreach($list as $v) { ?>				<tr class="mouse click">
+				</tr><? if(is_array($list)) { foreach($list as $v) { ?>				<? if($cans && !in_array($v['id'], $cans) && $v['add_perm'] == 1) { continue; } ?>
+				<tr class="mouse click">
 					<td class="list-text"><?=$v['id']?></td>
 					<td class="list-text"><input type="text" value="<?=$v['vieworder']?>" name="no_order_new[<?php echo isset($v['id']) ? $v['id'] : "";?>]" class="text no_order" /></td>
 					<td class="list-text" style="text-align:left;">&nbsp;&nbsp;<? if($v['add_perm'] == 1) { ?><a href="./content.htm?catid=<?=$v['id']?>&amp;lua=piece" title="点击进入碎片内容管理"><?=$v['name']?></a><? } else { ?><?=$v['name']?><? } ?></td>

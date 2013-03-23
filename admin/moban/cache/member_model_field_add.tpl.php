@@ -1,6 +1,6 @@
 <? if(!defined('LUA_ROOT')) exit('Access Denied'); include Lua::display('_head',$this->dir); ?>
 <div class="luatop">
-	<div class="position">Lua：CMS  > <a href="./member.htm?action=model">会员模型</a> > <a href="./member.htm?action=model_field&amp;id=<?=$id?>">【<?php echo isset($db['modelname']) ? $db['modelname'] : "";?>】字段管理</a> > 添加字段</div>
+	<div class="position">Doo：CMS  > <a href="./member.htm?action=model">会员模型</a> > <a href="./member.htm?action=model_field&amp;id=<?=$id?>">【<?php echo isset($db['modelname']) ? $db['modelname'] : "";?>】字段管理</a> > 添加字段</div>
 </div>
 <div class="clear"></div>
 
