@@ -19,7 +19,7 @@
 			<div class="clear"></div>
 			<h3 style="margin-top:2px;">服务与支持</h3>
 			<div class="fuwu">
-				<a href="http://dbx.cc/bbs/" target="_blank">技术交流</a><span>-</span><a href="http://www.doophp.net/jack/doc" target="_blank">用户指南</a><span>-</span><a href="http://www.doophp.net" target="_blank">DooPHP中国</a><span>-</span><a href="http://www.doophp.net/jack/download/" target="_blank">Doo下载</a><span>-</span><a href="https://github.com/cyobason/doophp.cms" target="_blank">DooPHP.Cms开发框架下载</a>
+				<a href="http://www.doophp.net/forum/" target="_blank">技术交流</a><span>-</span><a href="http://www.doophp.net/jack/doc" target="_blank">用户指南</a><span>-</span><a href="http://www.doophp.net" target="_blank">DooPHP中国</a><span>-</span><a href="http://www.doophp.net/jack/download/" target="_blank">Doo下载</a><span>-</span><a href="https://github.com/cyobason/doophp.cms" target="_blank">DooPHP.Cms开发框架下载</a>
 			</div>
 		</div>
 		</div>
