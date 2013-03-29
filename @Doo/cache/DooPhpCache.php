@@ -60,9 +60,9 @@ class DooPhpCache {
                     unlink($cfile);
                 }
             }else{
-                if ($cachetime && file_exists($cfile) && time() - $cachetime < filemtime($cfile)){
+                if ($cachetime && file_exists($cfile) && TIMESTAMP - $cachetime < filemtime($cfile)){
                     include $cfile ;
-                    if(time() < $data[0]){
+                    if(TIMESTAMP < $data[0]){
                         return $data[1];
                     }else{
                         unlink($cfile);

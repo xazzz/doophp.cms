@@ -8,6 +8,7 @@ define('ADMIN_ROOT', 'admin');
 define('PROJECT_ROOT', substr($_SERVER['SCRIPT_FILENAME'], 0, -9));
 define('SUPER_MAN', 'admin');
 define('TIMESTAMP', time());
+define('HTML_PATH', PROJECT_ROOT.'cache/html/');
 
 error_reporting(E_ALL | E_STRICT);
 date_default_timezone_set('Asia/Kuala_Lumpur');
@@ -56,6 +57,6 @@ Doo::db()->sql_tracking = true;
 Doo::app()->route = $route;
 
 Doo::loadClass('Lua',false,ADMIN_ROOT);
-Doo::loadClass('Our',false,ADMIN_ROOT);
 
+ob_start();
 Doo::app()->run();

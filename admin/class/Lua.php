@@ -3,6 +3,36 @@
 class Lua{
     
     /*
+     * 生成静态页面
+     */
+    public static function save_html($filename, $dir = ''){
+        $data = ob_get_contents();
+        ob_end_clean();
+        $path = HTML_PATH.$dir;
+        if (!file_exists($path)) {
+            Doo::loadHelper('DooFile');
+            $fileManager = new DooFile(0777);
+            $fileManager->create($path);
+        }
+        echo $data;
+        if(file_put_contents($path.$filename, $data)>0){
+            return true;
+        }
+        return false;
+    }
+    
+    /*
+     * 读取静态页面带时间缓存
+     */
+    public static function get_html($filename, $cachetime = 1800){
+        if ($cachetime && file_exists(HTML_PATH.$filename) && TIMESTAMP - $cachetime < filemtime(HTML_PATH.$filename)){
+            include HTML_PATH.$filename;
+            return true;
+        }
+        return false;
+    }
+    
+    /*
      * 获取静态数据缓存
      */
     public static function get_cache($id, $cachetime = 60){
