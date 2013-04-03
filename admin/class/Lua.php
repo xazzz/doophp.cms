@@ -3,6 +3,22 @@
 class Lua{
     
     /*
+     * 数据切割，适用于瀑布流
+     */
+    public static function chunk($list, $row){
+        $index = 0;
+        $ret = array();
+        if ($list){
+            foreach ($list as $item){
+                $mod = $index % $row;
+                $ret['col'.$mod][] = $item;
+                $index++;
+            }
+        }
+        return $ret;
+    }
+    
+    /*
      * 生成静态页面
      */
     public static function save_html($filename, $dir = ''){
@@ -288,7 +304,7 @@ class Lua{
         $endpage   = min($totalpage,$startpage+$rangepage*2 - 1);
         $startpage = min($startpage,$endpage - $rangepage*2 + 1);
         if($startpage < 1) $startpage = 1;
-        $url .= strpos($url, '?') ? '&amp;' : '?';
+        $url .= strstr($url, '?') ? '&amp;' : '?';
         $html = '<a href="'.$url.'p=1">首页</a>';
         $html .= $page > 1 ? '<a href="'.$url.'p='.($page-1).'">上一页</a>':''; 
         for($i = $startpage;$i <= $endpage;$i++){ 
