@@ -1,0 +1,179 @@
+<!--{template _head.@this->dir}-->
+
+<div class="luatop">
+	<div class="position">Doo：CMS  > <!--{if $up_db}-->$up_db[modelname]  > <!--{/if}-->$table_db[modelname]  > 列表</div>
+</div>
+<div class="clear"></div>
+
+<div id="showmessage"></div>
+
+<div class="stat_list" style="padding-left:24px;margin:0px;">
+	<ul>
+		<!--{if $mods}-->
+			<!--{loop $mods $k $v}-->
+			<li class="{if $v['id'] == $tableid}now{/if}"><a href="./content.htm?action=show&tableid=$v[id]">$v[modelname]</a></li>
+			<!--{/loop}-->
+		<!--{else}-->
+		<li class="now"><a href="./content.htm?action=show&tableid=$tableid">$table_db[modelname]</a></li>
+		<!--{/if}-->
+		<!--{if $next}-->
+			<li>查看列表：&nbsp;<!--{loop $next $k $v}--><a href="./content.htm?action=show&tableid=$v[id]">$v[modelname]</a>&nbsp;&nbsp;<!--{/loop}--></li>
+		<!--{/if}-->
+	</ul>
+</div>
+<div style="clear:both;"></div>
+
+<table cellpadding="2" cellspacing="1" class="table">
+	<tr>
+		<td colspan="20" class="centle" style="height:20px; line-height:30px; font-weight:normal; padding-left:10px;">
+			<div style="float:left;">
+				<!--{if $isdel == 1}-->
+				<a href="./content.htm?action=show&tableid=$tableid"><font color="gray">返回列表</font></a>&nbsp;&nbsp;
+				<!--{else}-->
+				<a href="./content.htm?action=show&tableid=$tableid&isdel=1"><font color="gray">回收站</font></a>&nbsp;&nbsp;
+				<!--{/if}-->
+			</div>
+			<div class="formright">
+				<form method="get" action="./content.htm?action=show&tableid=$tableid&isdel=$isdel">
+				&nbsp;推荐
+				<select name="commend" id="commend">
+					<option value="">---</option>
+					<!--{loop $range $v}-->
+					<option value="$v">$v</option>
+					<!--{/loop}-->
+				</select>
+				&nbsp;置顶
+				<select name="topped" id="topped">
+					<option value="">---</option>
+					<!--{loop $range $v}-->
+					<option value="$v">$v</option>
+					<!--{/loop}-->
+					</select>
+				<input name="txt" type="text" class="text" id="searchtext" value="请输入信息标题关键字。" onclick="this.value='';"/>
+				<input type="submit" name="" value="搜索" class="submitmi" style="padding:2px;"/>
+				</form>
+			</div>
+		</td>
+	</tr>
+	<tr id="list-top">
+		<td width="40" class="list" style="padding:0px; text-align:center;">选择</td>
+		<td width="80" class="list" style="padding:0px; text-align:center;">ID</td>
+		<td width="60" class="list" style="padding:0px; text-align:center;">排序</td>
+		<td class="list">标题</td><td width="50" style="padding:0px; text-align:center;" class="list" >推荐</td>
+		<td width="50" style="padding:0px; text-align:center;" class="list" >置顶</td>
+		<td width="100" class="list">发布时间</td>
+		<td width="60" style="padding:0px; text-align:center;" class="list">用户</td>
+		<td width="60" class="list">操作</td>
+	</tr>
+	<!--{loop $lists $v}-->
+	<tr class="mouse click" id="tr_$v[id]">
+		<td class="list-text"><input name="checkbox[]" type='checkbox' value="$v[id]"/></td>
+		<td class="list-text">$v[id]</td>
+		<td class="list-text"><input type="text" value="$v[vieworder]" name="order_new[{$v[id]}]" class="text no_order" /></td>
+		<td class="list-text" style="text-align:left;">&nbsp;&nbsp;<font color="$v[color]">$v[subject]</font><!--{if isset($v['picurl']) && $v['picurl']}-->&nbsp;<font color="green">(图)</font><!--{/if}--></td>
+		<td class="list-text"><!--{if $v['commend']}-->$v[commend]<!--{else}-->--<!--{/if}--></td>
+		<td class="list-text"><!--{if $v['topped']}-->$v[topped]<!--{else}-->--<!--{/if}--></td>
+		<td class="list-text">{echo date('Y-m-d H:i',$v['dateline']);}</td>
+		<td class="list-text">$v[username]</td>
+		<td class="list-text">
+			<div style="position:relative;">
+				<a href="./content.htm?action=edit&catid=$v[catid]&id=$v[id]&tableid=$tableid&tid=$v[$tid]" target="_blank" style="float:left; margin-left:10px;">修改</a>
+				<div class="columnmore">
+					<span class="text">更多&nbsp;<img src="{echo $this->img;}img/column12.gif" style="position:relative; bottom:2px;" /></span>
+					<div class="none columnmorediv">
+						<div><a href="javascript:;">--无--</a></div>
+				</div>
+			</div>
+		</td>
+	</tr>
+	<!--{/loop}-->
+	<tr>
+		<td class="all"><input name="chkAll" type="checkbox" id="chkAll" value="checkbox" onclick="selectAll($(this));"></td>
+		<td class="all-submit" colspan="19" style="padding:5px 10px;">
+			<!--{if $isdel == 1}-->
+			<input name="submit" type='submit' value='还原' class="submit li-submit" onclick="undo();"/> 
+			<!--{else}-->
+			<input name="submit" type='submit' value='移除' class="submit li-submit" onclick="recycle();"/> 
+			<!--{/if}-->
+			<input name="submit" type='submit' value='排序' class="submit li-submit" onclick="vieworder();"/>
+			<div class="li-submit">
+				<select name="move" onchange="commendit(this.value);">
+					<option value="">推荐至...</option>
+					<option value="0">取消</option>
+					<!--{loop $range $v}-->
+					<option value="$v">$v</option>
+					<!--{/loop}-->
+				</select>
+			</div>
+			<div class="li-submit">
+				<select name="move" onchange="toppedit(this.value);">
+					<option value="">置顶至...</option>
+					<option value="0">取消</option>
+					<!--{loop $range $v}-->
+					<option value="$v">$v</option>
+					<!--{/loop}-->
+				</select>
+			</div>
+		</td>
+	</tr>
+	<!--{if $pages}-->
+	<tr>
+		<td class="page_list" colspan="20" style="padding:5px 0px;">$pages</td>
+	</tr>
+	<!--{/if}-->
+</table>
+
+<script>
+function recycle(){
+	if (confirm('确认要移除至回收站吗?')){
+		option('recycle', 1, '');
+	}
+}
+function undo(){
+	option('recycle', 0, '');
+}
+function vieworder(){
+	var a = $('.no_order').fieldSerialize();
+	option('vieworder', 0, a);
+}
+function commendit(id){
+	option('commendit', id, '');
+}
+function toppedit(id){
+	option('toppedit', id, '');
+}
+function option(act, id, cdc){
+	var val = get_value();
+	$.post('./content.htm?action=show_act',{act:act,id:id,val:val,tab:'$table_db[tablename]',tid:$tableid,cdc:cdc},function(data){
+		var obj = eval('(' + data + ')');
+		showmessage(obj.type, obj.info, obj.url);
+	});
+}
+function selectAll(e){
+	var v = e.attr("checked") ? true : false;
+	$("input[name='checkbox[]']").attr("checked",v);
+}
+function get_value(){
+	var v = [];
+	$("input[name='checkbox[]']:checked").each(function(){
+		v.push($(this).val());
+	});
+	return v;
+}
+</script>
+<script>
+$(function(){
+	$('.columnmore').hover(
+		function () {
+			$(this).find('span.text').addClass("columnmore_hover");
+			$(this).find('div.columnmorediv').show();
+		},
+		function () {
+			$(this).find('span.text').removeClass("columnmore_hover");
+			$(this).find('div.columnmorediv').hide();
+		}
+	);
+});
+</script>
+
+<!--{template _foot.@this->dir}-->

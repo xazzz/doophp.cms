@@ -1,0 +1,35 @@
+<? if(!defined('LUA_ROOT')) exit('Access Denied'); include Lua::display('_head',$this->dir); ?>
+<div class="luatop">
+	<div class="position">Doo：CMS  > <a href="./tpl.htm">模板管理</a></div>
+</div>
+<div class="clear"></div>
+
+<div class="stat_list" style="padding-left:24px;margin:0px;">
+	<ul>
+		<li class="<? if($kindof == 1) { ?>now<? } ?>"><a href="./tpl.htm">列表模板</a></li>
+		<li class="<? if($kindof == 2) { ?>now<? } ?>"><a href="./tpl.htm?action=content">内容模板</a></li>
+		<li class="<? if($kindof == 3) { ?>now<? } ?>"><a href="./tpl.htm?action=common">公共模板</a></li>
+	</ul>
+</div>
+<div style="clear:both;"></div>
+
+<table cellpadding="2" cellspacing="1" class="table">
+	<tr>
+		<td class="centle" height="20" colspan="10" style="font-weight:normal;">
+			<div style="float:left;">&nbsp;&nbsp;<a href="./tpl.htm?action=add">+新增模板</a></div>
+		</td>
+	</tr>
+	<tr>
+		<td width="60" class="list" style="padding:0px; text-align:center;">ID</td>
+		<td class="list">模板名称</td>	
+		<td class="list">创建时间</td>
+		<td class="list">最后修改</td>
+		<td width="100" class="list">操作</td>
+	</tr><? if(is_array($list)) { foreach($list as $k => $v) { ?><tr class="mouse click">
+		<td class="list-text"><?=$v['id']?></td>
+		<td class="list-text color999"><?=$v['name']?> (<?=$v['tplfile']?>)</td>
+		<td class="list-text color999"><? echo date('Y-m-d H:i', $v['dateline']);; ?></td>
+		<td class="list-text color999"><?=$v['username']?> (<? echo date('Y-m-d H:i', $v['lasttime']);; ?>)</td>		
+		<td class="list-text color999"><a href="./tpl.htm?action=edit&amp;id=<?=$v['id']?>">修改</a> <a href="./tpl.htm?action=del&amp;id=<?=$v['id']?>" onclick="return confirm('确认要删除吗?');">删除</a></td>
+	</tr><? } } ?></table>
+<? include Lua::display('_foot',$this->dir); ?>

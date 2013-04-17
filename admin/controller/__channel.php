@@ -104,6 +104,7 @@ $route["*"]["/'.ADMIN_ROOT.'/category.htm"] = array("__category", "index");
 $route["*"]["/'.ADMIN_ROOT.'/content.htm"] = array("__content", "index");
 $route["*"]["/'.ADMIN_ROOT.'/file.htm"] = array("__file", "index");
 $route["*"]["/'.ADMIN_ROOT.'/piece.htm"] = array("__piece", "index");
+$route["*"]["/'.ADMIN_ROOT.'/tpl.htm"] = array("__tpl", "index");
 $route["*"]["/'.ADMIN_ROOT.'/plugin.htm"] = array("__extend", "admin");
 
 // 以上为后台路由地址，不可更改！
@@ -175,7 +176,8 @@ require_once "../@Doo/Lua.php";
             'domain' => Lua::post('domain'),
             'groupname' => $groupname,
             'name' => $name,
-            'path' => $path
+            'path' => $path,
+            'ishtml' => intval(Lua::post('ishtml'))
         );
     }
     

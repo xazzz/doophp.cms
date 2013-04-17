@@ -23,7 +23,11 @@
 	<tr> 
 		<td class="text"><font class="must">*</font>频道管理组：</td>
 		<td colspan="2" class="input"> <input name="groupname" type="text" class="text" value="<?=$db['groupname']?>"></td>
-	</tr> 
+	</tr>
+	<tr> 
+		<td class="text">生成静态：</td>
+		<td colspan="2" class="input"> <input type="radio" name="ishtml" value="1" <? if($db['ishtml'] == 1) { ?>checked<? } ?>/> 是 <input type="radio" name="ishtml" value="0" <? if($db['ishtml'] == 0) { ?>checked<? } ?>/> 否</td>
+	</tr>	
 	<tr> 
 		<td class="text"></td>
 		<td class="submit"><input type="submit" name="submit" value="保存" class="submit" onclick="post('./channel.htm?action=<?=$action?>');"/></td>

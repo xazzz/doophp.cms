@@ -150,3 +150,91 @@ function ColorSel(c){
 	$('#color').val(c);
 	return true;
 }
+
+/**
+* alert
+*/
+function echo(str) {
+	LAYER.open('<div style="margin:20px;">'+str+'</div>', "友情提示");
+}
+
+jQuery.fn.drag = function(id){
+	return this.each(function(){
+		var draging = false;
+		var startLeft,startTop;
+		var startX,startY;
+
+		$(this).css('cursor','move');
+		$(this).mousedown(function(event){
+			var o = id ? document.getElementById(id) : this;
+			if(!event) event = window.event;
+	        if (o.setCapture) {
+				o.setCapture();
+			} else if (window.captureEvents) {
+				window.captureEvents(Event.MOUSEMOVE | Event.MOUSEUP);
+			}
+			
+			var offset = $(o).offset();
+			startLeft = offset.left;
+			var posval = $(o).css('position');
+			startTop = offset.top - (($(o).css('position') == 'fixed') ? $(window).scrollTop() : 0);
+			startX = event.clientX;
+			startY = event.clientY;
+		
+			$(document).bind('mousemove',function(event){
+				var deltaX = event.clientX - startX;
+				var deltaY = event.clientY - startY;
+				var left = startLeft + deltaX;
+				var top = startTop + deltaY;
+				$(o).css({left:left+'px',top:top+'px'});
+			});
+			$(document).bind('mouseup',function(event){
+				if(o.releaseCapture) {
+					o.releaseCapture();
+				} else if(window.captureEvents) {
+					window.captureEvents(Event.MOUSEMOVE|Event.MOUSEUP);
+				}
+				$(document).unbind('mouseup');
+				$(document).unbind('mousemove');
+			});
+		});
+	});
+};
+
+var LAYER = {
+	width:null,
+	open:function() {
+		if(!$("#layer").length) {
+			$(document.body).append('<div id="layerMarsk"></div><div id="layer"><h4><span></span><a href="javascript:void(0)" class="btn_close"></a></h4><div id="layerHtml"></div></div>');
+		}
+		var html = arguments[0] ? arguments[0] : '';
+		var title = arguments[1] ? arguments[1] : '';
+		this.width = arguments[2] ? arguments[2] : 600;
+		if(html) {
+			$("#layerHtml").html(html);
+			$("#layer h4 span").html(title);
+			$("#layer h4").drag('layer');
+		}
+		$("#layer h4 a").click(this.close);
+		this.show();
+	},
+	close:function() {
+		$("#layerHtml").html('');
+		$("#layer").fadeOut("fast");
+		$("#layerMarsk").fadeOut("fast");		
+	},
+	show:function() {
+		var owidth = $(window).width();
+		var oheight = $(document).height();
+		var mtop = ($(window).height() - $("#layer").height()) / 2;
+		$("#layer").css({
+			left  : ((owidth - this.width) / 2) + "px",
+			top   : (mtop > 0 ? mtop : 0) + "px",
+			width : this.width + "px"
+		});
+		$("#layer").css("width", this.width+"px");
+		$("#layerMarsk").css({width:owidth+"px", height:oheight+"px",opacity:'0.6',zIndex:99});
+		$("#layerMarsk").fadeIn("fast");
+		$("#layer").fadeIn("fast");
+	}
+};

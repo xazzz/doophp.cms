@@ -38,6 +38,102 @@ class __content extends __auth{
     }
     
     /*
+     * 按tableid操作数据
+     */
+    private function show_act(){
+        $act = Lua::post('act');
+        $val = Lua::post('val');
+        $tab = Lua::post('tab');
+        $ids = Lua::post('id');
+        $tid = Lua::post('tid');
+        $cdc = Lua::post('cdc');
+        $message = '';
+        if (empty($val) && empty($cdc)){
+            Lua::ajaxmessage('error', '请选择对象');
+        }
+        if (empty($tab)){
+            Lua::ajaxmessage('error', '请选择数据表');
+        }
+        $ims = $val ? implode(',',$val) : array();
+        switch ($act){
+            case 'recycle':
+                $message = $ids == 1 ? '移除成功' : '还原成功';
+                Doo::db()->query("update $tab set isdel='$ids' where id in ($ims)");
+                break;
+            case 'vieworder':
+                $message = '排序成功';
+                if ($cdc){
+                    $cdc = str_replace(array('order_new','%5B','%5D'),array('','',''),$cdc);
+                    $a = explode('&',$cdc);
+                    if ($a){
+                        foreach ($a as $k){
+                            list($x,$y) = explode('=',$k);
+                            Doo::db()->query("update $tab set vieworder='$y' where id='$x'");
+                        }
+                    }
+                }
+                break;
+            case 'commendit':
+                $message = '推荐成功';
+                Doo::db()->query("update $tab set commend='$ids' where id in ($ims)");
+                break;
+            case 'toppedit':
+                $message = '置顶成功';
+                Doo::db()->query("update $tab set topped='$ids' where id in ($ims)");
+                break;
+        }
+        Lua::ajaxmessage('success', $message, "./content.htm?action=show&tableid=$tid");
+    }
+    
+    /*
+     * 按tableid操作数据
+     */
+    private function show(){
+        $tableid = Lua::get('tableid');
+        $table_db = $this->_table_db($tableid);
+        if ($table_db['upid']){
+            $up_db = $this->_table_db($table_db['upid']);
+            $mods = $this->_next_mods($table_db['upid']);
+        }else{
+            $up_db = array();
+            $mods = array();
+        }
+        if (empty($up_db)){
+            Lua::admin_msg('提示信息', '当前为一级模型');
+        }
+        $tid = $up_db['subid'];
+        $next = $this->_next_mods($tableid);
+        $and = '';
+        $url = "/content.htm?action=show&tableid=$tableid";
+        $range = range(1,9);
+        $isdel = intval(Lua::get('isdel'));
+        if ($isdel == 1){
+            $url .= "&isdel=1";
+        }
+        $txt = Lua::get('txt');
+        if ($txt){
+            $and .= " and subject like binary '%$txt%' ";
+            $url .= "&txt=$txt";
+        }
+        $topped = Lua::get('topped');
+        if ($topped){
+            $and .= " and topped='$topped' ";
+            $url .= "&topped=$topped";
+        }
+        $commend = Lua::get('commend');
+        if ($commend){
+            $and .= " and commend='$commend' ";
+            $url .= "&commend=$commend";
+        }
+        $tpp = 20;
+        $limit = (($this->page - 1) * $tpp).','.$tpp;
+        $count = Doo::db()->count("select count(*) from ".$table_db['tablename']." where isdel='$isdel' $and");
+        $lists = Lua::get_more("select * from ".$table_db['tablename']." where isdel='$isdel' $and order by vieworder desc,id desc limit ".$limit);
+        $pages = Lua::page($url, $this->page, $count, $tpp);
+        include Lua::display('content_show', $this->dir);
+    }
+    
+    /*
      * 内容正常列表
      */
     private function home($isdel = 0){
@@ -131,7 +227,7 @@ class __content extends __auth{
             $count = Doo::db()->count("select count(*) from ".$this->mode_db['tablename']." where isdel='$isdel' $and");
             $tpp = 20;
             $limit = (($this->page - 1) * $tpp).','.$tpp;
-            $list = Lua::get_more("select * from ".$this->mode_db['tablename']." where isdel='$isdel' $and order by vieworder asc,id desc limit ".$limit);
+            $list = Lua::get_more("select * from ".$this->mode_db['tablename']." where isdel='$isdel' $and order by vieworder desc,id desc limit ".$limit);
             $page = Lua::page($url.$this->lua_url.$rec, $this->page, $count, $tpp);
             // 检查是否存在批量上传插件
             $pbu = 0;

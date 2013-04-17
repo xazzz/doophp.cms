@@ -60,6 +60,7 @@ CREATE TABLE `lua_category` (
   `title` char(50) NOT NULL,
   `seokey` char(50) NOT NULL,
   `seoinfo` char(200) NOT NULL,
+  `tpl_id` int(10) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -82,6 +83,7 @@ CREATE TABLE `lua_channel` (
   `createtime` int(10) NOT NULL,
   `classname` char(10) NOT NULL,
   `isdefault` tinyint(1) NOT NULL,
+  `ishtml` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id` (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
@@ -329,4 +331,26 @@ CREATE TABLE `lua_secure` (
 
 -- ----------------------------
 -- Records of lua_secure
+-- ----------------------------
+
+
+-- ----------------------------
+-- Table structure for `lua_tpls`
+-- ----------------------------
+DROP TABLE IF EXISTS `lua_tpls`;
+CREATE TABLE `lua_tpls` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `systemname` char(20) NOT NULL,
+  `name` char(40) NOT NULL,
+  `kindof` tinyint(1) NOT NULL,
+  `dateline` int(10) NOT NULL,
+  `lasttime` int(10) NOT NULL,
+  `uid` int(10) NOT NULL,
+  `username` char(20) NOT NULL,
+  `tplfile` char(20) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of lua_tpls
 -- ----------------------------

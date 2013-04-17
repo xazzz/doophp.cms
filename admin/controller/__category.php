@@ -3,6 +3,8 @@ Doo::loadController('__auth');
 
 class __category extends __auth{
     
+    private $ch = array();
+    
     /*
      * 入口
      */
@@ -14,6 +16,7 @@ class __category extends __auth{
             return $rs;            
         }
         if (method_exists($this, $action)){
+            $this->ch = Lua::get_one("select * from lua_channel where path='".SYSNAME."'");
             $this->$action();
         }else{
             Lua::e404();
@@ -24,7 +27,7 @@ class __category extends __auth{
      * 栏目列表
      */
     private function home(){
-        $mods = $this->_models();
+        $mods = $this->_models($this->ch);
         $list = $cate = $this->_tree(0, 0, ' ');
         $cans = array();
         if ($this->user['category_can']){
@@ -86,7 +89,7 @@ class __category extends __auth{
      */
     private function add(){
         $action = 'save';
-        $mods = $this->_models();
+        $mods = $this->_models($this->ch);
         $cate = $this->_tree();
         $db = Lua::db_array('lua_category');
         include Lua::display('category_add', $this->dir);
@@ -99,7 +102,7 @@ class __category extends __auth{
         $id = Lua::get('id');
         $action = "save_edit&id=$id";
         $db = Lua::get_one("select * from lua_category where id='$id' and systemname='".SYSNAME."'");
-        $mods = $this->_models();
+        $mods = $this->_models($this->ch);
         $cate = $this->_tree();
         include Lua::display('category_add', $this->dir);
     }
@@ -179,9 +182,8 @@ class __category extends __auth{
     /*
      * 模型列表
      */
-    private function _models(){
-        $cn = Lua::get_one("select id from lua_channel where path='".SYSNAME."'");
-        $list = Lua::get_more("select * from lua_model where status='1' and mtype='1' and cid='".$cn['id']."' order by id asc");
+    private function _models($ch){
+        $list = Lua::get_more("select * from lua_model where status='1' and mtype='1' and cid='".$ch['id']."' order by id asc");
         $oute = array();
         if ($list){
             foreach ($list as $v){

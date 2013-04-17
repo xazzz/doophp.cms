@@ -44,5 +44,6 @@ function set_status(uid){
 		});
 	}
 }
+
 </script>
 <? include Lua::display('_foot',$this->dir); ?>

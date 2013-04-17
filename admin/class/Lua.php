@@ -205,7 +205,7 @@ class Lua{
             case 'picurl':
                 $html = "<input name='$field' type='text' class='text' value='$value' readonly style='float:left;' /><input name='upfile' type='file' id='{$field}_upload' /><script type='text/javascript'>$(document).ready(function(){upfile('#{$field}_upload','upimage','$field');});</script>";
                 if ($value){
-                    $html .= " <a href='/".SYSNAME."/$value' target='new'>查看</a>";
+                    $html .= " <a href='/$value' target='new'>查看</a>";
                 }                
                 break;
             case 'edit':

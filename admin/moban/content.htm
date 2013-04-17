@@ -18,6 +18,9 @@
 		<!--{loop $nav $v}-->
 			<li class="{if $v['id']==$tableid}now{/if}"><a href="./content.htm?catid=$catid&tableid=$v[id]&tid={$tid}{echo $this->lua_url;}">$v[modelname]<!--{if $v['id'] == $tableid}--> √<!--{/if}--></a></li>
 		<!--{/loop}-->
+		<!--{if $mods}-->
+			<li>查看列表：&nbsp;<!--{loop $mods $k $v}--><a href="./content.htm?action=show&tableid=$v[id]">$v[modelname]</a>&nbsp;&nbsp;<!--{/loop}--></li>
+		<!--{/if}-->
 	</ul>
 </div>
 <div style="clear:both;"></div>

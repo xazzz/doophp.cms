@@ -13,3 +13,10 @@
 .datepicker tbody td.date { cursor: pointer; }
 .datepicker tbody td.date.over { background-color: #99ffff; }
 .datepicker tbody td.date.chosen { font-weight: bold; background-color: #ccffcc; }
+
+#layer{ position:fixed; _position:absolute; width:600px; top:100px; border:5px solid #EFF7E5; background:#FFF; left:250px; display:none; z-index:100;}
+#layer h4{ font-size:14px; color:#363; padding:5px 5px 0 10px; margin:0; height:24px; line-height:20px; border:1px solid #B9D591; border-bottom:none; background:url(../img/hd-1.gif) repeat-x bottom;}
+#layer h4 span{ float:left;}
+#layer h4 .btn_close{float:right; cursor:pointer;width:17px;height:17px;border:0;background:url(../img/icon_close.gif) no-repeat 0 0;margin-top:-1px;}
+#layerHtml{ padding:5px; clear:both; font-family:"宋体",Tahoma; border:1px solid #B9D591; border-top:none}
+#layerMarsk{ background:#FFF; z-index:99px; position:absolute; left:0; top:0; display:none;}

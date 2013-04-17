@@ -60,6 +60,12 @@
 			<? } ?>
 		</td>
 	</tr>
+	<? if($this->ch['ishtml'] == 1) { ?>
+	<tr> 
+		<td class="text"></td>
+		<td class="input color390">静态设置</td> 
+	</tr>
+	<? } ?>
 	<tr> 
 		<td class="text"></td>
 		<td class="input color390">搜索引擎优化设置(seo)</td> 
