@@ -629,8 +629,10 @@ class __member extends __auth{
         $uid = Lua::get('uid');
         $sqlarr['email'] = Lua::post('email');
         $password = Lua::post('password');
-        if ($password && $password != Lua::post('confirm_password')){
-            Lua::ajaxmessage('error', '二次密码不相同');
+        if ($password){
+            if ($password != Lua::post('confirm_password')){
+                Lua::ajaxmessage('error', '二次密码不相同');
+            }            
             $sqlarr['password'] = md5($password);
         }
         Lua::update('lua_member', $sqlarr, array('uid'=>$uid));
