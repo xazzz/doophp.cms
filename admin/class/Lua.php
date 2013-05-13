@@ -1,7 +1,13 @@
 <?php 
 
 class Lua{
-    
+        /*
+     * 获取下级数据
+     */
+    public static function get_sub($fatherid, $subid, $tablename, $select='*', $limit=10, $vieworder = 0){
+        $order = $vieworder == 1 ? "vieworder asc,id desc" : "id desc" ;
+        return Lua::get_more("select $select from $tablename where isdel='0' and $subid='$fatherid' order by $order limit ".$limit);
+    }
     /*
      * 数据切割，适用于瀑布流
      */
@@ -205,7 +211,7 @@ class Lua{
             case 'picurl':
                 $html = "<input name='$field' type='text' class='text' value='$value' readonly style='float:left;' /><input name='upfile' type='file' id='{$field}_upload' /><script type='text/javascript'>$(document).ready(function(){upfile('#{$field}_upload','upimage','$field');});</script>";
                 if ($value){
-                    $html .= " <a href='/$value' target='new'>查看</a>";
+                    $html .= " <a href='/".SYSNAME."/$value' target='new'>查看</a>";
                 }                
                 break;
             case 'edit':
