@@ -43,7 +43,7 @@
 	<tr class="mouse click">
 		<td class="list-text"><a href="javascript:;" title="切换显示状态" onclick="__set($v[id]);"><!--{if $v['status'] == 1}-->Y<!--{else}--><font color='red'>N</font><!--{/if}--></a></td>
 		<td class="list-text">$v[name]</td>
-		<td class="list-text"><input name="no_order[{$v[id]}]" type="text" class="text no_order" value="$v[vieworder]"></td>
+		<td class="list-text"><input name="no_order[{echo $v['id'];}]" type="text" class="text no_order" value="$v[vieworder]"></td>
 		<td class="list-text">$v[fieldname]</td>
 		<td class="list-text"><!--{echo $type[$v['fieldtype']];}--></td>		
 		<td class="list-text"><a href="javascript:;" title="设置必填选项" onclick="__must($v[id]);"><!--{if $v['ismust'] == 1}--><font color='red'>Y</font><!--{else}-->N<!--{/if}--></a></td>

@@ -1,7 +1,7 @@
 <!--{template _head.@this->dir}-->
 
 <div class="luatop">
-	<div class="position">Doo：CMS  > <!--{if $this->lua == 'piece'}--><a href="./piece.htm">碎片管理</a><!--{else}--><a href="./category.htm">栏目管理</a><!--{/if}--> > <a href="./content.htm?catid={$catid}{echo $this->lua_url;}"><!--{echo $this->cate_db['name'];}--></a> <!--{if $db}-->> <a href="./content.htm?catid=$catid&tableid=$tableid&tid={$tid}{echo $this->lua_url;}"><!--{echo $this->mode_db['modelname'];}--></a> > <font color="blue"><u>$db[subject]</u></font><!--{/if}--></div>
+	<div class="position">Doo：CMS  > <!--{if $this->lua == 'piece'}--><a href="./piece.htm">碎片管理</a><!--{else}--><a href="./category.htm">栏目管理</a><!--{/if}--> > <a href="./content.htm?catid={echo $catid;}{echo $this->lua_url;}"><!--{echo $this->cate_db['name'];}--></a> <!--{if $db}-->> <a href="./content.htm?catid=$catid&tableid=$tableid&tid={echo $tid;}{echo $this->lua_url;}"><!--{echo $this->mode_db['modelname'];}--></a> > <font color="blue"><u>$db[subject]</u></font><!--{/if}--></div>
 </div>
 <div class="clear"></div>
 
@@ -10,13 +10,13 @@
 <div class="stat_list" style="padding-left:24px;margin:0px;">
 	<ul>
 		<!--{if $father}-->
-		<li><a href="./content.htm?catid={$father[id]}{echo $this->lua_url;}">$father[name] ↑</a></li>
+		<li><a href="./content.htm?catid={echo $father['id'];}{echo $this->lua_url;}">$father[name] ↑</a></li>
 		<!--{/if}-->
 		<!--{loop $Ftree $v}-->
-			<li class="{if $v['id']==$catid}now{/if}"><a href="./content.htm?catid={$v[id]}{echo $this->lua_url;}">$v[name]<!--{if $v['id'] == $catid}-->($count)<!--{/if}--></a></li>
+			<li class="{if $v['id']==$catid}now{/if}"><a href="./content.htm?catid={echo $v['id'];}{echo $this->lua_url;}">$v[name]<!--{if $v['id'] == $catid}-->($count)<!--{/if}--></a></li>
 		<!--{/loop}-->
 		<!--{loop $nav $v}-->
-			<li class="{if $v['id']==$tableid}now{/if}"><a href="./content.htm?catid=$catid&tableid=$v[id]&tid={$tid}{echo $this->lua_url;}">$v[modelname]<!--{if $v['id'] == $tableid}--> √<!--{/if}--></a></li>
+			<li class="{if $v['id']==$tableid}now{/if}"><a href="./content.htm?catid=$catid&tableid=$v[id]&tid={echo $tid;}{echo $this->lua_url;}">$v[modelname]<!--{if $v['id'] == $tableid}--> √<!--{/if}--></a></li>
 		<!--{/loop}-->
 		<!--{if $mods}-->
 			<li>查看列表：&nbsp;<!--{loop $mods $k $v}--><a href="./content.htm?action=show&tableid=$v[id]">$v[modelname]</a>&nbsp;&nbsp;<!--{/loop}--></li>
@@ -30,18 +30,18 @@
 		<td colspan="20" class="centle" style=" height:20px; line-height:30px; font-weight:normal; padding-left:10px;">
 			<div style="float:left;">
 				<!--{loop $Stree $v}-->
-				<a href="./content.htm?catid=$v[id]" style="text-decoration:none;"><b>[{$v[name]}]</b></a>&nbsp;&nbsp;
+				<a href="./content.htm?catid=$v[id]" style="text-decoration:none;"><b>[{echo $v['name'];}]</b></a>&nbsp;&nbsp;
 				<!--{/loop}-->
 				<!--{if $this->cate_db['add_perm'] == 1}-->
-				<a href="./content.htm?action=add&catid=$catid{$suffix}{echo $this->lua_url;}"><font color="red">[+]添加内容</font></a>&nbsp;&nbsp;
+				<a href="./content.htm?action=add&catid=$catid{echo $suffix;}{echo $this->lua_url;}"><font color="red">[+]添加内容</font></a>&nbsp;&nbsp;
 				<!--{/if}-->
 				<!--{if $isdel == 1}-->
-				<a href="./content.htm?catid=$catid{$suffix}{echo $this->lua_url;}"><font color="gray">返回列表</font></a>&nbsp;&nbsp;
+				<a href="./content.htm?catid=$catid{echo $suffix;}{echo $this->lua_url;}"><font color="gray">返回列表</font></a>&nbsp;&nbsp;
 				<!--{else}-->
-				<a href="./content.htm?action=recycle&catid=$catid{$suffix}{echo $this->lua_url;}&rec=1"><font color="gray">回收站</font></a>&nbsp;&nbsp;
+				<a href="./content.htm?action=recycle&catid=$catid{echo $suffix;}{echo $this->lua_url;}&rec=1"><font color="gray">回收站</font></a>&nbsp;&nbsp;
 				<!--{/if}-->
 				<!--{if $pbu == 1}-->
-				<a href="./plugin.htm?action=batch&catid=$catid{$suffix}">批量上传</a>&nbsp;&nbsp;
+				<a href="./plugin.htm?action=batch&catid=$catid{echo $suffix;}">批量上传</a>&nbsp;&nbsp;
 				<!--{/if}-->
 			</div>
 			<div class="formright">
@@ -95,8 +95,8 @@
 	<tr class="mouse click" id="tr_$v[id]">
 		<td class="list-text"><input name="checkbox[]" type='checkbox' value="$v[id]"/></td>
 		<td class="list-text">$v[id]</td>
-		<td class="list-text"><input type="text" value="$v[vieworder]" name="order_new[{$v[id]}]" class="text no_order" /></td>
-		<td class="list-text" style="text-align:left;">&nbsp;&nbsp;<!--{if $this->cate_db['add_perm'] == 0}--><a href="./content.htm?catid={$v[catid]}{echo $this->lua_url;}">[<!--{echo $catidb[$v['catid']]['name'];}-->]</a> <!--{/if}--><font color="$v[color]">$v[subject]</font><!--{if isset($v['picurl']) && $v['picurl']}-->&nbsp;<font color="green">(图)</font><!--{/if}--></td>
+		<td class="list-text"><input type="text" value="$v[vieworder]" name="order_new[{echo $v['id'];}]" class="text no_order" /></td>
+		<td class="list-text" style="text-align:left;">&nbsp;&nbsp;<!--{if $this->cate_db['add_perm'] == 0}--><a href="./content.htm?catid={echo $v['catid'];}{echo $this->lua_url;}">[<!--{echo $catidb[$v['catid']]['name'];}-->]</a> <!--{/if}--><font color="$v[color]">$v[subject]</font><!--{if isset($v['picurl']) && $v['picurl']}-->&nbsp;<font color="green">(图)</font><!--{/if}--></td>
 		<!--{loop $fields $e}-->
 		<td class="list-text"><!--{echo $v[$e['fieldname']];}--></td>
 		<!--{/loop}-->
@@ -106,13 +106,13 @@
 		<td class="list-text">$v[username]</td>
 		<td class="list-text">
 			<div style="position:relative;">
-				<a href="./content.htm?action=edit&catid=$v[catid]&id=$v[id]{$suffix}{echo $this->lua_url;}" style="float:left; margin-left:10px;">修改</a>
+				<a href="./content.htm?action=edit&catid=$v[catid]&id=$v[id]{echo $suffix;}{echo $this->lua_url;}" style="float:left; margin-left:10px;">修改</a>
 				<div class="columnmore">
 					<span class="text">更多&nbsp;<img src="{echo $this->img;}img/column12.gif" style="position:relative; bottom:2px;" /></span>
 					<div class="none columnmorediv">
 						<!--{if $mods}-->
 							<!--{loop $mods $m}-->
-							<div><a href="./content.htm?catid=$v[catid]&tableid=$m[id]&tid={$v[id]}{echo $this->lua_url;}">$m[modelname]</a></div>
+							<div><a href="./content.htm?catid=$v[catid]&tableid=$m[id]&tid={echo $v['id'];}{echo $this->lua_url;}">$m[modelname]</a></div>
 							<!--{/loop}-->
 						<!--{else}-->
 						<div><a href="javascript:;">--无--</a></div>
@@ -189,7 +189,7 @@ function option(v, action){
 	var val = get_value();
 	if (val){
 		if (v){
-			$.post('./content.htm?love=1{$suffix}{echo $this->lua_url;}',{action:action,catid:v,values:val,trueid:'$catid'},function(data){
+			$.post('./content.htm?love=1{echo $suffix;}{echo $this->lua_url;}',{action:action,catid:v,values:val,trueid:'$catid'},function(data){
 				var obj = eval('(' + data + ')');
 				showmessage(obj.type, obj.info, obj.url);
 			});
@@ -201,7 +201,7 @@ function del(){
 	if (confirm('确认要彻底删除吗?')){
 		var val = get_value();
 		if (val){
-			$.post('./content.htm?love=1{$suffix}{echo $this->lua_url;}',{action:'del',values:val,catid:'$catid',del:$isdel},function(data){
+			$.post('./content.htm?love=1{echo $suffix;}{echo $this->lua_url;}',{action:'del',values:val,catid:'$catid',del:$isdel},function(data){
 				var obj = eval('(' + data + ')');
 				showmessage(obj.type, obj.info, obj.url);
 			});
@@ -212,7 +212,7 @@ function del(){
 function vieworder(){
 	var a = $('.no_order').fieldSerialize();
 	if (a){
-		$.post('./content.htm?love=1{$suffix}{echo $this->lua_url;}',{action:'orderit',values:a,catid:'$catid'},function(data){
+		$.post('./content.htm?love=1{echo $suffix;}{echo $this->lua_url;}',{action:'orderit',values:a,catid:'$catid'},function(data){
 			var obj = eval('(' + data + ')');
 			showmessage(obj.type, obj.info, obj.url);
 		});

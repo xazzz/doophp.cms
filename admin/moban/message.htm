@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>{$title} - DooPHP.Net</title>
+<title>$title - DooPHP.Net</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 <meta http-equiv="Content-Language" content="zh-cn"/>
 <style>
@@ -43,7 +43,7 @@ function update(num) {
 		<!--{if $url == ''}-->
 		javascript:history.go(-1);
 		<!--{else}-->
-		javascript:location.href="{$url}";
+		javascript:location.href="$url";
 		<!--{/if}-->
 	}else{
 	}
@@ -61,9 +61,9 @@ function update(num) {
 				</div>
 			</div>
 			<div class="login-right">	
-				<h1 class="login-title">{$title}</h1>
+				<h1 class="login-title">$title</h1>
 				<div class="articles">
-					{$content}
+					$content
 					<!--{if $url}-->
 					<p><a href="$url">3秒后自动跳转, 如无反应请点击...</a></p>
 					<!--{else}-->

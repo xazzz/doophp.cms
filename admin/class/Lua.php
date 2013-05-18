@@ -749,30 +749,31 @@ class Tpl{
         $const_regexp = "([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*)";
 
         $template = preg_replace("/\<\!\-\-\{(.+?)\}\-\-\>/s", "{\\1}", $template);
-        $template = str_replace("{LF}", "<?=\"\\n\"?>", $template);
-        $template = preg_replace("/\{(\\\$[a-zA-Z0-9_\[\]\'\"\$\.\x7f-\xff]+)\}/s", "<?=\\1?>", $template);
+        $template = str_replace("{LF}", "<?php echo \"\\n\";?>", $template);
+        $template = preg_replace("/\{(\\\$[a-zA-Z0-9_\[\]\'\"\$\.\x7f-\xff]+)\}/s", "<?php echo \\1;?>", $template);
         $template = preg_replace("/$var_regexp/es", "Tpl::addquote('<?=\\1?>')", $template);
-        $template = preg_replace("/\<\?\=\<\?\=$var_regexp\?\>\?\>/es", "Tpl::addquote('<?php echo isset(\\1) ? \\1 : \"\";?>')", $template);
+		$template = preg_replace("/\<\?\=\<\?\=$var_regexp\?\>\?\>/es", "Tpl::addquote('<?php echo isset(\\1) ? \\1 : \"\";?>')", $template);        
 
-        $template = "<? if(!defined('LUA_ROOT')) exit('Access Denied'); ?>\n$template";
+        $template = "<?php if(!defined('LUA_ROOT')) exit('Access Denied'); ?>\n$template";
         $template = preg_replace_callback("/[\n\r\t]*\{template\s+([a-z0-9_]+)\}[\n\r\t]*/is", "Tpl::display", $template);
         $template = preg_replace_callback("/[\n\r\t]*\{template\s+(.+?)\}[\n\r\t]*/is", "Tpl::display", $template);
-        $template = preg_replace("/[\n\r\t]*\{eval\s+(.+?)\}[\n\r\t]*/ies", "Tpl::stripvtags('<? \\1 ?>','')", $template);
-        $template = preg_replace("/[\n\r\t]*\{echo\s+(.+?)\}[\n\r\t]*/ies", "Tpl::stripvtags('<? echo \\1; ?>','')", $template);
-        $template = preg_replace("/([\n\r\t]*)\{elseif\s+(.+?)\}([\n\r\t]*)/ies", "Tpl::stripvtags('\\1<? } elseif(\\2) { ?>\\3','')", $template);
-        $template = preg_replace("/([\n\r\t]*)\{else\}([\n\r\t]*)/is", "\\1<? } else { ?>\\2", $template);
+        $template = preg_replace("/[\n\r\t]*\{eval\s+(.+?)\}[\n\r\t]*/ies", "Tpl::stripvtags('<?php \\1; ?>','')", $template);
+        $template = preg_replace("/[\n\r\t]*\{echo\s+(.+?)\}[\n\r\t]*/ies", "Tpl::stripvtags('<?php echo \\1; ?>','')", $template);
+        $template = preg_replace("/([\n\r\t]*)\{elseif\s+(.+?)\}([\n\r\t]*)/ies", "Tpl::stripvtags('\\1<?php } elseif(\\2) { ?>\\3','')", $template);
+        $template = preg_replace("/([\n\r\t]*)\{else\}([\n\r\t]*)/is", "\\1<?php } else { ?>\\2", $template);
         // cache
         $template = str_replace('<!-- endcache -->', "\n<?php Doo::cache('front')->end(); ?>\n<?php endif; ?>", $template);
         $template = preg_replace_callback('/<!-- cache\(([^\t\r\n}\)]+)\) -->/', "Tpl::convertCache", $template);
 
         for($i = 0; $i < $nest; $i++) {
-            $template = preg_replace("/[\n\r\t]*\{loop\s+(\S+)\s+(\S+)\}[\n\r]*(.+?)[\n\r]*\{\/loop\}[\n\r\t]*/ies", "Tpl::stripvtags('<? if(is_array(\\1)) { foreach(\\1 as \\2) { ?>','\\3<? } } ?>')", $template);
-            $template = preg_replace("/[\n\r\t]*\{loop\s+(\S+)\s+(\S+)\s+(\S+)\}[\n\r\t]*(.+?)[\n\r\t]*\{\/loop\}[\n\r\t]*/ies", "Tpl::stripvtags('<? if(is_array(\\1)) { foreach(\\1 as \\2 => \\3) { ?>','\\4<? } } ?>')", $template);
-            $template = preg_replace("/([\n\r\t]*)\{if\s+(.+?)\}([\n\r]*)(.+?)([\n\r]*)\{\/if\}([\n\r\t]*)/ies", "Tpl::stripvtags('\\1<? if(\\2) { ?>\\3','\\4\\5<? } ?>\\6')", $template);
+            $template = preg_replace("/[\n\r\t]*\{loop\s+(\S+)\s+(\S+)\}[\n\r]*(.+?)[\n\r]*\{\/loop\}[\n\r\t]*/ies", "Tpl::stripvtags('<?php if(is_array(\\1)) { foreach(\\1 as \\2) { ?>','\\3<?php } } ?>')", $template);
+            $template = preg_replace("/[\n\r\t]*\{loop\s+(\S+)\s+(\S+)\s+(\S+)\}[\n\r\t]*(.+?)[\n\r\t]*\{\/loop\}[\n\r\t]*/ies", "Tpl::stripvtags('<?php if(is_array(\\1)) { foreach(\\1 as \\2 => \\3) { ?>','\\4<?php } } ?>')", $template);
+            $template = preg_replace("/([\n\r\t]*)\{if\s+(.+?)\}([\n\r]*)(.+?)([\n\r]*)\{\/if\}([\n\r\t]*)/ies", "Tpl::stripvtags('\\1<?php if(\\2) { ?>\\3','\\4\\5<?php } ?>\\6')", $template);
         }
 
-        $template = preg_replace("/\{$const_regexp\}/s", "<?=\\1?>", $template);
+        $template = preg_replace("/\{$const_regexp\}/s", "<?php echo \\1;?>", $template);
         $template = preg_replace("/ \?\>[\n\r]*\<\? /s", " ", $template);
+		$template = preg_replace("/\<\?\=$var_regexp\?\>/s", "<?php echo \\1; ?>", $template);
 
         if(!@$fp = fopen($objfile, 'w')) {
             exit("Directory './moban/' not found or have no access!");
@@ -782,6 +783,7 @@ class Tpl{
         $template = preg_replace("/\<script[^\>]*?src=\"(.+?)\".*?\>\s*\<\/script\>/ise", "Tpl::stripscriptamp('\\1')", $template);
         $template = preg_replace("/[\n\r\t]*\{block\s+([a-zA-Z0-9_]+)\}(.+?)\{\/block\}/ies", "Tpl::stripblock('\\1', '\\2')", $template);
         $template = str_replace('@this','$this',$template);
+
         flock($fp, 2);
         fwrite($fp, $template);
         fclose($fp);
@@ -789,7 +791,7 @@ class Tpl{
     
     public static function display($matches){
         list($file,$dir) = explode('.',$matches[1]);
-        return "\n<? include Lua::display('$file',$dir); ?>\n";
+        return "\n<?php include Lua::display('$file',$dir); ?>\n";
     }
 
     public static function transamp($str) {
@@ -825,8 +827,8 @@ class Tpl{
         }
         $s = preg_replace("/<\?=(.+?)\?>/", "{\$__\\1}", $s);
         $s = str_replace('?>', "\n\$$var .= <<<EOF\n", $s);
-        $s = str_replace('<?', "\nEOF;\n", $s);
-        return "<?\n$constadd\$$var = <<<EOF\n".$s."\nEOF;\n?>";
+        $s = str_replace('<?php', "\nEOF;\n", $s);
+        return "<?php\n$constadd\$$var = <<<EOF\n".$s."\nEOF;\n?>";
     }
 
     public static function convertCache($matches){

@@ -31,7 +31,7 @@
 	</tr>
 	<!--{loop $list $v}-->
 	<tr>
-		<td class="text"><!--{if $v['ismust']}--><font class="must">*</font><!--{/if}-->{$v[name]}：</td>
+		<td class="text"><!--{if $v['ismust']}--><font class="must">*</font><!--{/if}-->{echo $v['name'];}：</td>
 		<!--{if strstr($v['fieldtype'],'pic')}-->
 		<td colspan="2" class="input upload">
 		<!--{else}-->

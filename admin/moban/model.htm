@@ -22,7 +22,7 @@
 			<div style="float:left;">
 				分类：&nbsp;&nbsp;
 				<!--{loop @this->mtype $k $v}-->
-				<a href="./model.htm?mtype=$k{if $cid}&cid=$cid{/if}" style="{if isset($mtype) && $k==$mtype}color:red;{/if}">{$v}模型</a>&nbsp;&nbsp;
+				<a href="./model.htm?mtype=$k{if $cid}&cid=$cid{/if}" style="{if isset($mtype) && $k==$mtype}color:red;{/if}">{echo $v;}模型</a>&nbsp;&nbsp;
 				<!--{/loop}-->
 				//&nbsp;
 				<a href="./model.htm?action=add">+ 我要自己动手创造一款新的模型</a>&nbsp;&nbsp;

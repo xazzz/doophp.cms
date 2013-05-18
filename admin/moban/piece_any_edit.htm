@@ -11,15 +11,15 @@
 <table cellpadding="2" cellspacing="1" class="table">
 	<!--{loop $fields $v}-->
 	<tr> 
-		<td class="text">{$v[Field]}：</td>
-		<td class="text"><font color="gray">{$v[Type]}</font>&nbsp;&nbsp;</td>
+		<td class="text">{echo $v['Field'];}：</td>
+		<td class="text"><font color="gray">{echo $v['Type'];}</font>&nbsp;&nbsp;</td>
 		<td class="input">
 			<!--{if strstr($v['Type'],'int')}-->
-			<input name="post[{$v[Field]}]" type="text" class="text med" value="{echo $rs[$v['Field']];}">
+			<input name="post[{echo $v['Field'];}]" type="text" class="text med" value="{echo $rs[$v['Field']];}">
 			<!--{elseif strstr($v['Type'],'text')}-->
-			<textarea name="post[{$v[Field]}]" class="textarea keytext" cols="50" rows="4" >{echo $rs[$v['Field']];}</textarea>
+			<textarea name="post[{echo $v['Field'];}]" class="textarea keytext" cols="50" rows="4" >{echo $rs[$v['Field']];}</textarea>
 			<!--{else}-->
-			<input name="post[{$v[Field]}]" type="text" class="text" value="{echo $rs[$v['Field']];}">
+			<input name="post[{echo $v['Field'];}]" type="text" class="text" value="{echo $rs[$v['Field']];}">
 			<!--{/if}-->
 			<!--{if $v['Field'] == $pri}-->
 			(不可改动)

@@ -1,7 +1,7 @@
 <!--{template _head.@this->dir}-->
 
 <div class="luatop">
-	<div class="position">Doo：CMS  > <a href="./model.htm">模型管理</a> > <a href="./model.htm?action=table&id=$mid">$mdb[modelname]</a> > 【{$db[modelname]}】字段列表</div>
+	<div class="position">Doo：CMS  > <a href="./model.htm">模型管理</a> > <a href="./model.htm?action=table&id=$mid">$mdb[modelname]</a> > 【{echo $db['modelname'];}】字段列表</div>
 </div>
 <div class="clear"></div>
 
@@ -10,7 +10,7 @@
 <div class="stat_list" style="padding-left:24px;margin:0px;">
 	<ul>
 		<li><a href="./model.htm?action=table&id=$mid">$mdb[modelname]</a></li>
-		<li class="now"><a href="./model.htm?action=field&model_id=$mid&id=$id">【{$db[modelname]}】字段列表</a></li>
+		<li class="now"><a href="./model.htm?action=field&model_id=$mid&id=$id">【{echo $db['modelname'];}】字段列表</a></li>
 	</ul>
 </div>
 <div style="clear:both;"></div>
@@ -38,7 +38,7 @@
 		<td class="list-text"><a href="javascript:;" title="切换显示状态" onclick="__set($mid,$id,$v[id]);"><!--{if $v['status'] == 1}-->Y<!--{else}--><font color='red'>N</font><!--{/if}--></a></td>
 		<td class="list-text">$v[id]</td>
 		<td class="list-text" style="text-align:left;padding-left:4px;">$v[name]</td>
-		<td class="list-text"><input name="no_order[{$v[id]}]" type="text" class="text no_order" value="$v[vieworder]"></td>
+		<td class="list-text"><input name="no_order[{echo $v['id'];}]" type="text" class="text no_order" value="$v[vieworder]"></td>
 		<td class="list-text">$v[fieldname]</td>
 		<td class="list-text"><!--{echo $types[$v['fieldtype']];}--></td>		
 		<td class="list-text"><a href="javascript:;" title="设置必填选项" onclick="__be($mid,$id,$v[id]);"><!--{if $v['ismust'] == 1}--><font color='red'>Y</font><!--{else}-->N<!--{/if}--></a></td>

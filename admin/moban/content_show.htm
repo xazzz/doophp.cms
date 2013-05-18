@@ -69,7 +69,7 @@
 	<tr class="mouse click" id="tr_$v[id]">
 		<td class="list-text"><input name="checkbox[]" type='checkbox' value="$v[id]"/></td>
 		<td class="list-text">$v[id]</td>
-		<td class="list-text"><input type="text" value="$v[vieworder]" name="order_new[{$v[id]}]" class="text no_order" /></td>
+		<td class="list-text"><input type="text" value="$v[vieworder]" name="order_new[{echo $v['id'];}]" class="text no_order" /></td>
 		<td class="list-text" style="text-align:left;">&nbsp;&nbsp;<font color="$v[color]">$v[subject]</font><!--{if isset($v['picurl']) && $v['picurl']}-->&nbsp;<font color="green">(图)</font><!--{/if}--></td>
 		<td class="list-text"><!--{if $v['commend']}-->$v[commend]<!--{else}-->--<!--{/if}--></td>
 		<td class="list-text"><!--{if $v['topped']}-->$v[topped]<!--{else}-->--<!--{/if}--></td>

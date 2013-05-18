@@ -27,7 +27,7 @@
 				<!--{loop $list $v}-->
 				<tr class="mouse click">
 					<td class="list-text">$v[id]</td>
-					<td class="list-text"><input type="text" value="$v[vieworder]" name="order_new[{$v[id]}]" class="text no_order" /></td>
+					<td class="list-text"><input type="text" value="$v[vieworder]" name="order_new[{echo $v['id'];}]" class="text no_order" /></td>
 					<td class="list-text">$v[name]</td>
 					<td class="list-text">$v[credit]</td>
 					<td class="list-text"><a href="./member.htm?action=group_edit&model_id=$id&id=$v[id]">修改</a> <a href="./member.htm?action=group_del&model_id=$id&id=$v[id]" onclick="return confirm('确认要删除此用户组吗?');">删除</a></td>
